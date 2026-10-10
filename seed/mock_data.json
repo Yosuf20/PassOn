@@ -1,0 +1,368 @@
+{
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Priya Sharma",
+      "email": "priya@example.com",
+      "avatar": "PS",
+      "phone": "+91-98765-43210",
+      "joinedAt": "2026-08-15T10:00:00Z"
+    },
+    {
+      "id": "user-002",
+      "name": "Arjun Mehta",
+      "email": "arjun@example.com",
+      "avatar": "AM",
+      "phone": "+91-98765-43211",
+      "joinedAt": "2026-08-20T10:00:00Z"
+    },
+    {
+      "id": "user-003",
+      "name": "Sneha Reddy",
+      "email": "sneha@example.com",
+      "avatar": "SR",
+      "phone": "+91-98765-43212",
+      "joinedAt": "2026-09-01T10:00:00Z"
+    },
+    {
+      "id": "user-004",
+      "name": "Ravi Kumar",
+      "email": "ravi@example.com",
+      "avatar": "RK",
+      "phone": "+91-98765-43213",
+      "joinedAt": "2026-09-05T10:00:00Z"
+    }
+  ],
+  "communities": [
+    {
+      "id": "comm-001",
+      "name": "Sunshine PG – Koramangala",
+      "code": "SUN2026",
+      "type": "pg",
+      "memberCount": 24,
+      "createdAt": "2026-08-10T10:00:00Z",
+      "description": "Sunshine PG residents community for sharing and recycling items"
+    },
+    {
+      "id": "comm-002",
+      "name": "Green Valley Apartments",
+      "code": "GVA2026",
+      "type": "apartment",
+      "memberCount": 56,
+      "createdAt": "2026-07-01T10:00:00Z",
+      "description": "Green Valley residents helping each other reduce waste"
+    }
+  ],
+  "items": [
+    {
+      "id": "item-001",
+      "title": "Study Table Lamp",
+      "category": "electronics",
+      "condition": "good",
+      "description": "LED desk lamp, adjustable arm, works perfectly. Minor scratch on base.",
+      "suggestedPrice": { "min": 150, "max": 300 },
+      "askingPrice": 200,
+      "priceType": "price",
+      "route": "reuse",
+      "status": "available",
+      "postedBy": "user-002",
+      "communityId": "comm-001",
+      "photo": "lamp",
+      "postedAt": "2026-10-05T08:30:00Z",
+      "expiresAt": "2026-10-12T08:30:00Z"
+    },
+    {
+      "id": "item-002",
+      "title": "Organic Chemistry Textbook (Morrison & Boyd)",
+      "category": "books",
+      "condition": "fair",
+      "description": "Used textbook with some highlighting. All pages intact.",
+      "suggestedPrice": { "min": 50, "max": 150 },
+      "askingPrice": 0,
+      "priceType": "free",
+      "route": "reuse",
+      "status": "available",
+      "postedBy": "user-003",
+      "communityId": "comm-001",
+      "photo": "book",
+      "postedAt": "2026-10-06T14:00:00Z",
+      "expiresAt": "2026-10-13T14:00:00Z"
+    },
+    {
+      "id": "item-003",
+      "title": "Broken Laptop Charger (Dell)",
+      "category": "electronics",
+      "condition": "broken",
+      "description": "Dell 65W charger, frayed cable near connector. Not safe to use.",
+      "suggestedPrice": { "min": 0, "max": 0 },
+      "askingPrice": 0,
+      "priceType": "scrap",
+      "route": "ewaste",
+      "status": "available",
+      "postedBy": "user-002",
+      "communityId": "comm-001",
+      "photo": "charger",
+      "postedAt": "2026-10-04T11:00:00Z",
+      "expiresAt": "2026-10-11T11:00:00Z"
+    },
+    {
+      "id": "item-004",
+      "title": "Cotton Bedsheet Set",
+      "category": "home",
+      "condition": "good",
+      "description": "Queen size cotton bedsheet with 2 pillow covers. Lightly used, freshly washed.",
+      "suggestedPrice": { "min": 100, "max": 250 },
+      "askingPrice": 150,
+      "priceType": "price",
+      "route": "reuse",
+      "status": "available",
+      "postedBy": "user-004",
+      "communityId": "comm-001",
+      "photo": "bedsheet",
+      "postedAt": "2026-10-07T09:00:00Z",
+      "expiresAt": "2026-10-14T09:00:00Z"
+    },
+    {
+      "id": "item-005",
+      "title": "Electric Kettle (Prestige)",
+      "category": "appliances",
+      "condition": "good",
+      "description": "1.5L electric kettle. Works well, minor limescale inside.",
+      "suggestedPrice": { "min": 200, "max": 400 },
+      "askingPrice": 250,
+      "priceType": "price",
+      "route": "reuse",
+      "status": "claimed",
+      "claimedBy": "user-001",
+      "postedBy": "user-003",
+      "communityId": "comm-001",
+      "photo": "kettle",
+      "postedAt": "2026-10-03T16:00:00Z",
+      "expiresAt": "2026-10-10T16:00:00Z"
+    },
+    {
+      "id": "item-006",
+      "title": "Yoga Mat",
+      "category": "fitness",
+      "condition": "like_new",
+      "description": "6mm thick yoga mat, used only twice. No odor.",
+      "suggestedPrice": { "min": 200, "max": 400 },
+      "askingPrice": 0,
+      "priceType": "free",
+      "route": "reuse",
+      "status": "available",
+      "postedBy": "user-004",
+      "communityId": "comm-001",
+      "photo": "yogamat",
+      "postedAt": "2026-10-08T07:00:00Z",
+      "expiresAt": "2026-10-15T07:00:00Z"
+    },
+    {
+      "id": "item-007",
+      "title": "Old CRT Monitor",
+      "category": "electronics",
+      "condition": "broken",
+      "description": "15 inch CRT monitor from 2005. Screen flickers. E-waste.",
+      "suggestedPrice": { "min": 0, "max": 0 },
+      "askingPrice": 0,
+      "priceType": "scrap",
+      "route": "ewaste",
+      "status": "available",
+      "postedBy": "user-002",
+      "communityId": "comm-001",
+      "photo": "monitor",
+      "postedAt": "2026-10-04T11:30:00Z",
+      "expiresAt": "2026-10-11T11:30:00Z"
+    },
+    {
+      "id": "item-008",
+      "title": "Wooden Bookshelf (Small)",
+      "category": "furniture",
+      "condition": "fair",
+      "description": "3-shelf wooden bookshelf. Slightly wobbly but functional.",
+      "suggestedPrice": { "min": 300, "max": 600 },
+      "askingPrice": 400,
+      "priceType": "price",
+      "route": "reuse",
+      "status": "available",
+      "postedBy": "user-003",
+      "communityId": "comm-001",
+      "photo": "bookshelf",
+      "postedAt": "2026-10-07T12:00:00Z",
+      "expiresAt": "2026-10-14T12:00:00Z"
+    },
+    {
+      "id": "item-009",
+      "title": "Pile of Old Newspapers (5kg)",
+      "category": "paper",
+      "condition": "na",
+      "description": "Stack of old newspapers, about 5kg. Good for recycling.",
+      "suggestedPrice": { "min": 0, "max": 25 },
+      "askingPrice": 0,
+      "priceType": "scrap",
+      "route": "scrap",
+      "status": "available",
+      "postedBy": "user-004",
+      "communityId": "comm-001",
+      "photo": "newspaper",
+      "postedAt": "2026-10-06T10:00:00Z",
+      "expiresAt": "2026-10-13T10:00:00Z"
+    },
+    {
+      "id": "item-010",
+      "title": "Running Shoes (Nike, Size 9)",
+      "category": "clothing",
+      "condition": "good",
+      "description": "Nike running shoes, worn for ~3 months. Good grip, clean.",
+      "suggestedPrice": { "min": 400, "max": 800 },
+      "askingPrice": 500,
+      "priceType": "price",
+      "route": "reuse",
+      "status": "available",
+      "postedBy": "user-002",
+      "communityId": "comm-001",
+      "photo": "shoes",
+      "postedAt": "2026-10-08T15:00:00Z",
+      "expiresAt": "2026-10-15T15:00:00Z"
+    }
+  ],
+  "wishlist": [
+    {
+      "id": "wish-001",
+      "userId": "user-001",
+      "communityId": "comm-001",
+      "keyword": "study lamp",
+      "category": "electronics",
+      "createdAt": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": "wish-002",
+      "userId": "user-001",
+      "communityId": "comm-001",
+      "keyword": "bookshelf",
+      "category": "furniture",
+      "createdAt": "2026-10-02T10:00:00Z"
+    },
+    {
+      "id": "wish-003",
+      "userId": "user-003",
+      "communityId": "comm-001",
+      "keyword": "yoga mat",
+      "category": "fitness",
+      "createdAt": "2026-10-05T10:00:00Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-001",
+      "userId": "user-001",
+      "type": "wishlist_match",
+      "title": "Wishlist Match!",
+      "message": "A \"Study Table Lamp\" was just posted — matches your wishlist!",
+      "itemId": "item-001",
+      "read": false,
+      "createdAt": "2026-10-05T08:31:00Z"
+    },
+    {
+      "id": "notif-002",
+      "userId": "user-001",
+      "type": "wishlist_match",
+      "title": "Wishlist Match!",
+      "message": "A \"Wooden Bookshelf\" was just posted — matches your wishlist!",
+      "itemId": "item-008",
+      "read": false,
+      "createdAt": "2026-10-07T12:01:00Z"
+    },
+    {
+      "id": "notif-003",
+      "userId": "user-001",
+      "type": "claim_confirmed",
+      "title": "Claim Confirmed",
+      "message": "You claimed the Electric Kettle. Contact Sneha at +91-98765-43212.",
+      "itemId": "item-005",
+      "read": true,
+      "createdAt": "2026-10-04T10:00:00Z"
+    },
+    {
+      "id": "notif-004",
+      "userId": "user-002",
+      "type": "item_expiring",
+      "title": "Item Expiring Soon",
+      "message": "Your \"Study Table Lamp\" expires in 2 days. Consider lowering the price or marking as free.",
+      "itemId": "item-001",
+      "read": false,
+      "createdAt": "2026-10-10T08:00:00Z"
+    },
+    {
+      "id": "notif-005",
+      "userId": "user-001",
+      "type": "scrap_day",
+      "title": "Scrap Day This Saturday!",
+      "message": "Community scrap collection is scheduled for Oct 12. Add your scrap items!",
+      "read": false,
+      "createdAt": "2026-10-08T09:00:00Z"
+    }
+  ],
+  "scrapDays": [
+    {
+      "id": "scrap-001",
+      "communityId": "comm-001",
+      "date": "2026-10-12",
+      "status": "upcoming",
+      "itemIds": ["item-003", "item-007", "item-009"],
+      "estimatedWeight": 8.5,
+      "description": "Monthly scrap & e-waste collection drive"
+    }
+  ],
+  "impact": {
+    "communityId": "comm-001",
+    "itemsReused": 42,
+    "itemsScrapped": 18,
+    "kgDiverted": 156,
+    "co2eAvoided": 234,
+    "activeMemberCount": 19,
+    "totalListings": 67
+  },
+  "aiMockResponse": [
+    {
+      "name": "Desk Lamp (LED)",
+      "category": "electronics",
+      "condition": "good",
+      "suggestedPrice": { "min": 150, "max": 300 },
+      "route": "reuse",
+      "description": "Adjustable LED desk lamp with metal arm. Appears functional with minor wear."
+    },
+    {
+      "name": "Textbook — Data Structures & Algorithms",
+      "category": "books",
+      "condition": "fair",
+      "description": "Programming textbook with some wear on cover. Pages appear intact.",
+      "suggestedPrice": { "min": 50, "max": 120 },
+      "route": "reuse"
+    },
+    {
+      "name": "Phone Charger Cable (USB-C)",
+      "category": "electronics",
+      "condition": "broken",
+      "description": "USB-C cable with frayed insulation near connector. Not safe for use.",
+      "suggestedPrice": { "min": 0, "max": 0 },
+      "route": "ewaste"
+    },
+    {
+      "name": "Water Bottle (Steel, 750ml)",
+      "category": "home",
+      "condition": "good",
+      "description": "Stainless steel water bottle with minor dents. Clean and functional.",
+      "suggestedPrice": { "min": 80, "max": 150 },
+      "route": "reuse"
+    },
+    {
+      "name": "Pair of Jeans (Men, 32)",
+      "category": "clothing",
+      "condition": "good",
+      "description": "Blue denim jeans, lightly faded. No tears or stains.",
+      "suggestedPrice": { "min": 100, "max": 250 },
+      "route": "reuse"
+    }
+  ]
+}

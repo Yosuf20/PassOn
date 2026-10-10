@@ -1,0 +1,135 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: PassOn — Community Reuse & Recycling Platform
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.12
+    MemorySize: 256
+    Environment:
+      Variables:
+        STAGE: !Ref Stage
+        ITEMS_TABLE: !Ref ItemsTable
+        COMMUNITIES_TABLE: !Ref CommunitiesTable
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+  GroqApiKey:
+    Type: String
+    Default: ""
+    NoEcho: true
+    Description: Groq API Key for vision analysis
+  GroqVisionModel:
+    Type: String
+    Default: "qwen/qwen3.8-27b"
+    Description: Groq vision model identifier
+
+Resources:
+  # --- API Gateway ---
+  PassOnApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Stage
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+
+  # --- DynamoDB Tables ---
+  ItemsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub passOn-items-${Stage}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: communityId
+          AttributeType: S
+        - AttributeName: itemId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: communityId
+          KeyType: HASH
+        - AttributeName: itemId
+          KeyType: RANGE
+
+  CommunitiesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub passOn-communities-${Stage}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: communityId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: communityId
+          KeyType: HASH
+
+  # --- Lambda Functions ---
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/
+      Handler: handlers.auth_login
+      Events:
+        Login:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PassOnApi
+            Path: /auth/login
+            Method: post
+        Signup:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PassOnApi
+            Path: /auth/signup
+            Method: post
+
+  ItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/
+      Handler: handlers.list_items
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ItemsTable
+      Events:
+        ListItems:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PassOnApi
+            Path: /communities/{communityId}/items
+            Method: get
+        CreateItems:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PassOnApi
+            Path: /communities/{communityId}/items
+            Method: post
+
+  AnalyzeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/
+      Handler: handlers.analyze_photo
+      MemorySize: 512
+      Timeout: 60
+      Environment:
+        Variables:
+          GROQ_API_KEY: !Ref GroqApiKey
+          GROQ_VISION_MODEL: !Ref GroqVisionModel
+      Events:
+        Analyze:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PassOnApi
+            Path: /analyze
+            Method: post
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway URL
+    Value: !Sub https://${PassOnApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}

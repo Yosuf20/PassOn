@@ -1,0 +1,453 @@
+openapi: '3.0.3'
+info:
+  title: PassOn API
+  description: API for the PassOn community reuse & recycling platform
+  version: 0.1.0
+
+servers:
+  - url: /api
+    description: Local development (mock mode)
+  - url: https://{apiId}.execute-api.{region}.amazonaws.com/prod
+    description: AWS API Gateway
+    variables:
+      apiId:
+        default: placeholder
+      region:
+        default: ap-south-1
+
+paths:
+  /auth/signup:
+    post:
+      summary: Register a new user
+      operationId: signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/login:
+    post:
+      summary: Log in
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        '200':
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /communities:
+    post:
+      summary: Create a community
+      operationId: createCommunity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, type]
+              properties:
+                name: { type: string }
+                type: { type: string, enum: [hostel, pg, apartment, campus, society] }
+                description: { type: string }
+      responses:
+        '201':
+          description: Community created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Community'
+
+  /communities/join:
+    post:
+      summary: Join a community by invite code
+      operationId: joinCommunity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code: { type: string }
+      responses:
+        '200':
+          description: Joined community
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Community'
+
+  /communities/{communityId}/items:
+    get:
+      summary: List items in a community
+      operationId: listItems
+      parameters:
+        - name: communityId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [available, claimed, expired] }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: route
+          in: query
+          schema: { type: string, enum: [reuse, scrap, ewaste] }
+      responses:
+        '200':
+          description: Items list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+
+    post:
+      summary: Create item listings (batch)
+      operationId: createItems
+      parameters:
+        - name: communityId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ItemInput'
+      responses:
+        '201':
+          description: Items created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+
+  /communities/{communityId}/items/{itemId}/claim:
+    post:
+      summary: Claim an item
+      operationId: claimItem
+      parameters:
+        - name: communityId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Item claimed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+
+  /analyze:
+    post:
+      summary: AI analysis of uploaded photo
+      operationId: analyzePhoto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  description: Base64-encoded image data
+                mimeType:
+                  type: string
+                  default: image/jpeg
+                  example: image/jpeg
+                provider:
+                  type: string
+                  enum: [groq, mock]
+                  description: Optional provider override (auto-detected by default)
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: AI-generated item listings and provider metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AIItem'
+                  provider:
+                    type: string
+                    example: groq
+                  mock:
+                    type: boolean
+                    example: false
+        '400':
+          description: Invalid input or unreadable image data
+        '503':
+          description: AI provider unavailable or API key not configured
+
+  /communities/{communityId}/wishlist:
+    get:
+      summary: Get user wishlist
+      operationId: getWishlist
+      parameters:
+        - name: communityId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Wishlist entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WishlistEntry'
+
+    post:
+      summary: Add to wishlist
+      operationId: addToWishlist
+      parameters:
+        - name: communityId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [keyword]
+              properties:
+                keyword: { type: string }
+                category: { type: string }
+      responses:
+        '201':
+          description: Added to wishlist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WishlistEntry'
+
+  /notifications:
+    get:
+      summary: Get user notifications
+      operationId: getNotifications
+      responses:
+        '200':
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+
+  /communities/{communityId}/impact:
+    get:
+      summary: Get community impact stats
+      operationId: getImpact
+      parameters:
+        - name: communityId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Impact stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Impact'
+
+  /communities/{communityId}/scrap-days:
+    get:
+      summary: Get scheduled scrap days
+      operationId: getScrapDays
+      parameters:
+        - name: communityId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Scrap days
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScrapDay'
+
+components:
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        token: { type: string }
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        avatar: { type: string }
+        phone: { type: string }
+
+    Community:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        code: { type: string }
+        type: { type: string }
+        memberCount: { type: integer }
+        description: { type: string }
+
+    Item:
+      type: object
+      properties:
+        id: { type: string }
+        title: { type: string }
+        category: { type: string }
+        condition: { type: string, enum: [like_new, good, fair, broken, na] }
+        description: { type: string }
+        suggestedPrice:
+          type: object
+          properties:
+            min: { type: number }
+            max: { type: number }
+        askingPrice: { type: number }
+        priceType: { type: string, enum: [free, price, scrap] }
+        route: { type: string, enum: [reuse, scrap, ewaste] }
+        status: { type: string, enum: [available, claimed, expired] }
+        postedBy: { type: string }
+        claimedBy: { type: string }
+        communityId: { type: string }
+        photo: { type: string }
+        postedAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+
+    ItemInput:
+      type: object
+      required: [title, category, condition, route, priceType]
+      properties:
+        title: { type: string }
+        category: { type: string }
+        condition: { type: string }
+        description: { type: string }
+        askingPrice: { type: number }
+        priceType: { type: string, enum: [free, price, scrap] }
+        route: { type: string, enum: [reuse, scrap, ewaste] }
+
+    AIItem:
+      type: object
+      properties:
+        name: { type: string }
+        category: { type: string }
+        condition: { type: string }
+        description: { type: string }
+        suggestedPrice:
+          type: object
+          properties:
+            min: { type: number }
+            max: { type: number }
+        route: { type: string, enum: [reuse, scrap, ewaste] }
+
+    WishlistEntry:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        communityId: { type: string }
+        keyword: { type: string }
+        category: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    Notification:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        type: { type: string, enum: [wishlist_match, claim_confirmed, item_expiring, scrap_day] }
+        title: { type: string }
+        message: { type: string }
+        itemId: { type: string }
+        read: { type: boolean }
+        createdAt: { type: string, format: date-time }
+
+    Impact:
+      type: object
+      properties:
+        communityId: { type: string }
+        itemsReused: { type: integer }
+        itemsScrapped: { type: integer }
+        kgDiverted: { type: number }
+        co2eAvoided: { type: number }
+        activeMemberCount: { type: integer }
+        totalListings: { type: integer }
+
+    ScrapDay:
+      type: object
+      properties:
+        id: { type: string }
+        communityId: { type: string }
+        date: { type: string, format: date }
+        status: { type: string, enum: [upcoming, completed] }
+        itemIds:
+          type: array
+          items: { type: string }
+        estimatedWeight: { type: number }
+        description: { type: string }

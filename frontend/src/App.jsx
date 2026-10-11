@@ -19,7 +19,6 @@ import ScrapDayPage from './pages/ScrapDayPage';
 import ImpactPage from './pages/ImpactPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ProfilePage from './pages/ProfilePage';
-import LandingPage from './pages/LandingPage';
 
 function ProtectedRoute({ children }) {
   const { user, community } = useApp();
@@ -177,7 +176,7 @@ export default function App() {
           />
 
           {/* Root & Catch-all */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<RootRedirect />} />
           <Route path="*" element={<RootRedirect />} />
         </Routes>
 

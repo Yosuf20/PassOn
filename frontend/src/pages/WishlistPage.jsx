@@ -65,89 +65,126 @@ export default function WishlistPage() {
   if (loading) return <LoadingSpinner message="Loading wishlist..." />;
 
   return (
-    <div className="min-h-dvh bg-slate-50 pb-safe">
+    <div className="min-h-dvh bg-white text-gray-900 pb-safe">
       {/* Header */}
-      <div className="bg-white border-b border-slate-100 px-5 pt-12 pb-4 sticky top-0 z-30">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-slate-500 hover:text-slate-800">
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div>
-                <h1 className="font-bold text-xl text-slate-800 flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-rose-500" /> Wishlist
-                </h1>
-              </div>
-            </div>
+      <div className="border-b-2 border-gray-100 px-5 sm:px-8 pt-6 pb-4 bg-white sticky top-0 z-30">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => setShowAdd(!showAdd)}
-              className="p-2.5 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition"
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition"
             >
-              {showAdd ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+              <ArrowLeft className="w-4 h-4" />
             </button>
+            <h1 className="font-extrabold text-2xl sm:text-3xl text-gray-900 tracking-tight flex items-center gap-2">
+              <Heart className="w-6 h-6 text-rose-500" strokeWidth={2.5} />
+              <span>Wanted Wishlist</span>
+            </h1>
           </div>
+          <button
+            onClick={() => setShowAdd(!showAdd)}
+            className="px-4 py-2.5 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold text-xs rounded-lg transition-transform hover:scale-105 flex items-center gap-1.5"
+          >
+            {showAdd ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" strokeWidth={2.5} />}
+            <span>{showAdd ? 'Cancel' : 'Add Item'}</span>
+          </button>
+        </div>
 
-          {/* Add form */}
-          {showAdd && (
-            <form onSubmit={handleAdd} className="mt-4 space-y-3 animate-fade-in">
-              <input
-                type="text"
-                value={keyword}
-                onChange={e => setKeyword(e.target.value)}
-                placeholder="What are you looking for?"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-                autoFocus
-              />
-              <div className="flex gap-2 flex-wrap">
-                {categoryOptions.map(c => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setCategory(category === c ? '' : c)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition ${category === c ? 'bg-green-600 text-white' : 'bg-slate-100 text-slate-500'}`}
-                  >
-                    {c}
-                  </button>
-                ))}
+        {/* Add Form */}
+        {showAdd && (
+          <div className="max-w-4xl mx-auto mt-4">
+            <form onSubmit={handleAdd} className="bg-gray-100 rounded-2xl p-5 space-y-3.5 animate-fade-in">
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1">
+                  What are you looking for?
+                </label>
+                <input
+                  type="text"
+                  value={keyword}
+                  onChange={e => setKeyword(e.target.value)}
+                  placeholder="e.g. Study Lamp, Kettle, Economics Textbook..."
+                  className="w-full px-4 py-3 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-sm text-gray-900 font-medium outline-none"
+                  autoFocus
+                />
               </div>
+
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
+                  Optional Category Tag
+                </label>
+                <div className="flex gap-1.5 flex-wrap">
+                  {categoryOptions.map(c => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCategory(category === c ? '' : c)}
+                      className={`px-3 py-1 text-xs font-bold capitalize rounded-lg transition ${
+                        category === c
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-white text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <button
                 type="submit"
-                className="w-full py-3 bg-green-600 text-white rounded-xl font-semibold text-sm hover:bg-green-700 transition"
+                className="w-full py-3 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold text-sm rounded-lg transition-transform hover:scale-105"
               >
                 Add to Wishlist
               </button>
             </form>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      <div className="max-w-4xl mx-auto w-full px-5 pt-4 space-y-6">
-        {/* Matches */}
+      <div className="max-w-4xl mx-auto w-full px-5 sm:px-8 py-6 space-y-8">
+        {/* Matches Found */}
         {matches.length > 0 && (
           <section>
-            <h2 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-500" /> Matches Found
-            </h2>
-            <div className="space-y-3 stagger-children">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-amber-500" strokeWidth={2.5} />
+              <h2 className="font-extrabold text-xl text-gray-900">
+                Active Community Matches
+              </h2>
+            </div>
+            <div className="space-y-3">
               {matches.map(match => (
-                <div key={match.wish.id} className="bg-gradient-to-r from-rose-50 to-amber-50 border border-rose-100 rounded-2xl p-4 animate-fade-in">
-                  <p className="text-sm font-bold text-rose-700 mb-2">🎯 "{match.wish.keyword}" — {match.items.length} match{match.items.length !== 1 ? 'es' : ''}</p>
+                <div key={match.wish.id} className="bg-rose-50 rounded-2xl p-5">
+                  <div className="flex items-center justify-between text-sm font-bold text-rose-900 mb-3">
+                    <span>Wanted: "{match.wish.keyword}"</span>
+                    <span className="bg-rose-200 text-rose-900 px-2.5 py-0.5 rounded-md text-xs font-extrabold">
+                      {match.items.length} match{match.items.length !== 1 ? 'es' : ''}
+                    </span>
+                  </div>
                   <div className="space-y-2">
                     {match.items.map(item => (
                       <button
                         key={item.id}
                         onClick={() => navigate(`/item/${item.id}`)}
-                        className="w-full flex items-center gap-3 bg-white rounded-xl p-3 border border-rose-100 hover:shadow-sm transition"
+                        className="w-full flex items-center justify-between p-3.5 bg-white rounded-xl hover:bg-rose-100/50 transition text-left cursor-pointer"
                       >
-                        <span className="text-2xl">{ITEM_ICONS[item.category] || '📦'}</span>
-                        <div className="flex-1 text-left">
-                          <p className="text-sm font-medium text-slate-700">{item.title}</p>
-                          <p className="text-xs text-slate-400 capitalize">{item.category} • {item.condition}</p>
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{ITEM_ICONS[item.category] || '📦'}</span>
+                          <div>
+                            <p className="font-bold text-sm text-gray-900">{item.title}</p>
+                            <p className="text-xs text-gray-500 capitalize">
+                              {item.category} • {item.condition}
+                            </p>
+                          </div>
                         </div>
-                        <span className="text-sm font-bold text-green-600">
-                          {item.priceType === 'free' ? 'Free' : item.priceType === 'scrap' ? 'Scrap' : `₹${item.askingPrice}`}
-                        </span>
+                        <div className="text-xs font-extrabold">
+                          {item.priceType === 'free' ? (
+                            <span className="text-emerald-600">Free</span>
+                          ) : item.priceType === 'scrap' ? (
+                            <span className="text-amber-600">Scrap</span>
+                          ) : (
+                            <span className="text-gray-900">₹{item.askingPrice}</span>
+                          )}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -157,28 +194,37 @@ export default function WishlistPage() {
           </section>
         )}
 
-        {/* Current wishlist */}
+        {/* Current Wishlist */}
         <section>
-          <h2 className="font-bold text-slate-800 mb-3">Your Wishlist</h2>
+          <div className="mb-4">
+            <h2 className="font-extrabold text-xl text-gray-900">Your Monitored Items</h2>
+            <p className="text-xs text-gray-500 font-medium mt-0.5">
+              You will be alerted when someone lists an item matching these titles
+            </p>
+          </div>
+
           {wishlist.length === 0 ? (
-            <div className="text-center py-8">
-              <Heart className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-              <p className="text-slate-400 text-sm">Your wishlist is empty</p>
-              <button onClick={() => setShowAdd(true)} className="text-green-600 text-sm font-semibold mt-2">
-                Add your first item
-              </button>
+            <div className="bg-gray-100 rounded-2xl p-8 text-center">
+              <Heart className="w-8 h-8 text-gray-400 mx-auto mb-2" strokeWidth={2} />
+              <p className="font-bold text-base text-gray-900">Your wishlist is empty</p>
+              <p className="text-xs text-gray-500 mt-1 font-medium">
+                Looking for a textbook, fan, or kettle? Click Add Item above to start monitoring.
+              </p>
             </div>
           ) : (
-            <div className="space-y-2 stagger-children">
+            <div className="space-y-2.5">
               {wishlist.map(w => (
-                <div key={w.id} className="bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between animate-fade-in">
+                <div key={w.id} className="bg-gray-100 rounded-xl p-4 flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-sm text-slate-700">{w.keyword}</p>
-                    {w.category && <p className="text-xs text-slate-400 capitalize mt-0.5">{w.category}</p>}
+                    <p className="font-bold text-sm text-gray-900">{w.keyword}</p>
+                    {w.category && (
+                      <p className="text-xs text-gray-500 capitalize mt-0.5 font-medium">Category: {w.category}</p>
+                    )}
                   </div>
                   <button
                     onClick={() => handleRemove(w.id)}
-                    className="p-2 text-slate-400 hover:text-rose-500 transition"
+                    className="p-2 text-gray-400 hover:text-rose-600 rounded-lg transition"
+                    title="Remove item"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

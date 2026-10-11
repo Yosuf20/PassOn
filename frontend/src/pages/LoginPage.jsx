@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
-import { Leaf, Eye, EyeOff, ArrowRight, Recycle } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Recycle, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -37,36 +37,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-dvh flex flex-col bg-gradient-to-br from-green-800 via-green-700 to-emerald-600 relative overflow-hidden">
-      {/* Decorative circles */}
-      <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full" />
-      <div className="absolute top-40 -left-16 w-48 h-48 bg-white/5 rounded-full" />
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/5 rounded-full" />
+    <div className="min-h-dvh flex flex-col justify-center items-center px-4 py-12 bg-white relative overflow-hidden">
+      {/* Decorative flat geometric shapes */}
+      <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-blue-50 pointer-events-none" />
+      <div className="absolute top-1/3 -left-20 w-48 h-48 rounded-2xl bg-emerald-50 pointer-events-none rotate-12" />
+      <div className="absolute -bottom-16 right-10 w-56 h-56 rounded-full bg-amber-50 pointer-events-none" />
 
-      {/* Header */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 pt-12 pb-6">
-        <div className="animate-scale-in mb-3">
-          <div className="w-20 h-20 bg-white/15 backdrop-blur-sm rounded-3xl flex items-center justify-center mb-4 mx-auto border border-white/20">
-            <Recycle className="w-10 h-10 text-white" />
-          </div>
+      {/* Brand Header */}
+      <div className="max-w-md w-full mb-8 text-center relative z-10">
+        <div className="w-16 h-16 bg-blue-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 hover:scale-105 transition-transform">
+          <Recycle className="w-9 h-9" strokeWidth={2.5} />
         </div>
-        <h1 className="text-4xl font-extrabold text-white tracking-tight animate-fade-in">PassOn</h1>
-        <p className="text-green-100 text-base mt-2 text-center max-w-xs animate-fade-in" style={{ animationDelay: '100ms' }}>
+        <h1 className="font-extrabold text-4xl text-gray-900 tracking-tight">
+          PassOn
+        </h1>
+        <p className="text-gray-600 text-base mt-2 font-medium">
           Give it away. Sell it cheap. Recycle it right.
         </p>
       </div>
 
-      {/* Form Card */}
-      <div className="bg-white rounded-t-[2rem] md:rounded-[2rem] max-w-md w-full mx-auto px-6 pt-8 pb-10 shadow-2xl animate-slide-up mb-0 md:mb-12">
-        <h2 className="text-xl font-bold text-slate-800 mb-1">
-          {isSignUp ? 'Create Account' : 'Welcome Back'}
-        </h2>
-        <p className="text-slate-500 text-sm mb-6">
-          {isSignUp ? 'Join your community and start reusing' : 'Sign in to your community'}
-        </p>
+      {/* Main Authentication Card */}
+      <div className="bg-gray-100 rounded-2xl max-w-md w-full p-8 relative z-10 animate-slide-up">
+        <div className="mb-6">
+          <h2 className="font-bold text-2xl text-gray-900">
+            {isSignUp ? 'Create Account' : 'Welcome Back'}
+          </h2>
+          <p className="text-gray-500 text-sm mt-1">
+            {isSignUp
+              ? 'Join your residential community circle to begin reusing.'
+              : 'Sign in to access verified community notices and items.'}
+          </p>
+        </div>
 
         {error && (
-          <div className="bg-rose-50 text-rose-600 text-sm px-4 py-2.5 rounded-xl mb-4 font-medium">
+          <div className="bg-rose-100 text-rose-700 text-sm font-semibold p-3.5 rounded-lg mb-5">
             {error}
           </div>
         )}
@@ -74,31 +78,37 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {isSignUp && (
             <div>
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">Full Name</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
+                Full Name
+              </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Your full name"
-                className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-base"
+                placeholder="e.g. Priya Sharma"
+                className="w-full px-4 py-3 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-gray-900 font-medium placeholder:text-gray-400 outline-none transition"
               />
             </div>
           )}
 
           <div>
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">Email</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
+              Email Address
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-base"
+              className="w-full px-4 py-3 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-gray-900 font-medium placeholder:text-gray-400 outline-none transition"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">Password</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -106,12 +116,13 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-base pr-12"
+                className="w-full px-4 py-3 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-gray-900 font-medium placeholder:text-gray-400 outline-none transition pr-11"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 p-1"
+                title={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
@@ -121,32 +132,36 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold text-base rounded-xl shadow-lg shadow-green-600/30 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+            className="w-full py-4 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold text-base rounded-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed hover:scale-105 mt-2"
           >
             {loading ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="flex items-center gap-2 font-semibold">
+                <span className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin inline-block"></span>
+                Processing...
+              </span>
             ) : (
               <>
-                {isSignUp ? 'Create Account' : 'Sign In'}
-                <ArrowRight className="w-5 h-5" />
+                <span>{isSignUp ? 'Create Account' : 'Sign In'}</span>
+                <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
               </>
             )}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 pt-5 border-t border-gray-200 text-center">
           <button
             onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
-            className="text-green-700 font-semibold text-sm hover:text-green-800 transition"
+            className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition"
           >
             {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
           </button>
         </div>
 
-        <p className="text-center text-xs text-slate-400 mt-6 flex items-center justify-center gap-1">
-          <Leaf className="w-3 h-3" />
-          Demo: use pre-filled credentials to sign in
-        </p>
+        <div className="mt-4 p-3 bg-gray-200/60 rounded-lg text-center">
+          <p className="text-xs text-gray-600 font-medium">
+            Demo Credentials Pre-filled: Click Sign In to proceed
+          </p>
+        </div>
       </div>
     </div>
   );

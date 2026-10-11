@@ -8,7 +8,7 @@ import { Search, SlidersHorizontal, X } from 'lucide-react';
 
 const categories = ['all', 'electronics', 'books', 'home', 'appliances', 'fitness', 'furniture', 'clothing', 'paper'];
 const routes = ['all', 'reuse', 'scrap', 'ewaste'];
-const routeLabels = { all: 'All', reuse: 'Reuse', scrap: 'Scrap', ewaste: 'E-Waste' };
+const routeLabels = { all: 'All Routes', reuse: 'Reuse', scrap: 'Scrap', ewaste: 'E-Waste' };
 
 export default function MarketplacePage() {
   const { community } = useApp();
@@ -48,56 +48,78 @@ export default function MarketplacePage() {
   const claimed = filtered.filter(i => i.status === 'claimed');
 
   return (
-    <div className="min-h-dvh bg-slate-50 pb-safe">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-100 px-5 pt-12 pb-4 sticky top-0 z-30">
-        <h1 className="font-bold text-xl text-slate-800 mb-3">Marketplace</h1>
+    <div className="min-h-dvh bg-white text-gray-900 pb-safe">
+      {/* Sticky Header */}
+      <div className="bg-white border-b-2 border-gray-100 px-5 sm:px-8 pt-6 pb-4 sticky top-0 z-30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+          <h1 className="font-extrabold text-2xl sm:text-3xl text-gray-900 tracking-tight">
+            Marketplace
+          </h1>
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">
+            {available.length} available • {claimed.length} claimed
+          </p>
+        </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+        {/* Flat Search Bar */}
+        <div className="relative mb-3">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400" />
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search items..."
-            className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+            placeholder="Search items (e.g. lamp, textbook, kettle)..."
+            className="w-full pl-10 pr-10 py-3 bg-gray-100 border-2 border-transparent focus:border-blue-500 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 outline-none transition font-medium"
           />
           {search && (
-            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+            >
               <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
-        {/* Route filter chips */}
-        <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide -mx-1 px-1">
+        {/* Route Filter Chips */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1">
           {routes.map(r => (
             <button
               key={r}
               onClick={() => setSelectedRoute(r)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 ${selectedRoute === r ? 'bg-green-600 text-white shadow-sm' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                selectedRoute === r
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
               {routeLabels[r]}
             </button>
           ))}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 transition ${showFilters ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-500'}`}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+              showFilters
+                ? 'bg-emerald-500 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             Category
           </button>
         </div>
 
-        {/* Category filters */}
+        {/* Category Filters */}
         {showFilters && (
-          <div className="flex gap-2 mt-2 flex-wrap animate-fade-in">
+          <div className="flex gap-1.5 mt-2.5 flex-wrap pt-2.5 border-t border-gray-100 animate-fade-in">
             {categories.map(c => (
               <button
                 key={c}
                 onClick={() => setSelectedCategory(c)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition ${selectedCategory === c ? 'bg-green-100 text-green-700' : 'bg-slate-50 text-slate-500 border border-slate-200'}`}
+                className={`px-3 py-1 rounded-md text-xs font-semibold capitalize transition ${
+                  selectedCategory === c
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
               >
                 {c}
               </button>
@@ -107,36 +129,42 @@ export default function MarketplacePage() {
       </div>
 
       {loading ? (
-        <LoadingSpinner message="Loading items..." />
+        <LoadingSpinner message="Loading marketplace items..." />
       ) : (
-        <div className="px-5 pt-4">
-          {/* Results count */}
-          <p className="text-xs text-slate-400 mb-3">{available.length} available • {claimed.length} claimed</p>
-
+        <div className="px-5 sm:px-8 py-6">
           {available.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-4xl mb-3">📭</p>
-              <p className="text-slate-500 font-medium">No items match your filters</p>
+            <div className="bg-gray-100 rounded-2xl p-12 text-center max-w-md mx-auto my-8">
+              <p className="font-bold text-xl text-gray-900 mb-2">No Matching Items</p>
+              <p className="text-sm text-gray-500 mb-4 font-medium">
+                Try loosening your search terms or clearing your category filters.
+              </p>
               <button
                 onClick={() => { setSearch(''); setSelectedCategory('all'); setSelectedRoute('all'); }}
-                className="text-green-600 text-sm font-semibold mt-2"
+                className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs rounded-lg transition"
               >
-                Clear filters
+                Reset Filters
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 stagger-children">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {available.map(item => (
                 <ItemCard key={item.id} item={item} />
               ))}
             </div>
           )}
 
-          {/* Claimed section */}
+          {/* Recently Claimed Section */}
           {claimed.length > 0 && (
-            <div className="mt-8">
-              <p className="text-sm font-semibold text-slate-400 mb-3">Recently Claimed</p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+            <div className="mt-12 pt-8 border-t-2 border-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-extrabold text-xl text-gray-900">
+                  Recently Claimed Goods
+                </h3>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                  Reserved by neighbours
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 opacity-75">
                 {claimed.map(item => (
                   <ItemCard key={item.id} item={item} />
                 ))}

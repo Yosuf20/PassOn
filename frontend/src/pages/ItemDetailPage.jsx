@@ -3,15 +3,22 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api, { ITEM_ICONS } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { ArrowLeft, Clock, Tag, AlertTriangle, CheckCircle2, Phone, MessageSquare, Share2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Clock, Tag, AlertTriangle, CheckCircle2, Phone, MessageSquare } from 'lucide-react';
 
-const conditionLabels = { like_new: 'Like New', good: 'Good', fair: 'Fair', broken: 'Broken', na: 'N/A' };
+const conditionLabels = {
+  like_new: 'Like New',
+  good: 'Good Condition',
+  fair: 'Fair / Usable',
+  broken: 'Broken / For Parts',
+  na: 'Unspecified'
+};
+
 const conditionColors = {
-  like_new: 'bg-emerald-100 text-emerald-700',
-  good: 'bg-green-100 text-green-700',
-  fair: 'bg-amber-100 text-amber-700',
-  broken: 'bg-rose-100 text-rose-600',
-  na: 'bg-slate-100 text-slate-500'
+  like_new: 'bg-emerald-100 text-emerald-800',
+  good: 'bg-blue-100 text-blue-800',
+  fair: 'bg-amber-100 text-amber-800',
+  broken: 'bg-rose-100 text-rose-800',
+  na: 'bg-gray-200 text-gray-700'
 };
 
 export default function ItemDetailPage() {
@@ -67,11 +74,17 @@ export default function ItemDetailPage() {
   if (loading) return <LoadingSpinner message="Loading item details..." />;
 
   if (!item) return (
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6">
-      <p className="text-slate-500 font-medium">Item not found</p>
-      <button onClick={() => navigate(-1)} className="mt-4 px-4 py-2 bg-green-600 text-white rounded-xl font-semibold">
-        Go Back
-      </button>
+    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-white">
+      <div className="bg-gray-100 p-8 rounded-2xl text-center max-w-sm">
+        <p className="font-bold text-xl text-gray-900">Item Not Found</p>
+        <p className="text-sm text-gray-500 mt-2 font-medium">This item may have expired or been removed.</p>
+        <button
+          onClick={() => navigate(-1)}
+          className="mt-5 px-5 py-2.5 bg-blue-500 text-white font-bold text-xs rounded-lg hover:bg-blue-600 transition"
+        >
+          Return to Marketplace
+        </button>
+      </div>
     </div>
   );
 
@@ -81,32 +94,32 @@ export default function ItemDetailPage() {
   const daysLeft = Math.max(0, Math.ceil((new Date(item.expiresAt) - new Date()) / (1000 * 60 * 60 * 24)));
 
   return (
-    <div className="min-h-dvh bg-slate-50 pb-safe">
-      {/* Top back bar for desktop */}
-      <div className="max-w-5xl mx-auto px-5 pt-6 pb-2 flex items-center justify-between">
+    <div className="min-h-dvh bg-white text-gray-900 pb-safe">
+      {/* Top back bar */}
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-6 pb-2 flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs font-bold text-gray-800 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Marketplace</span>
         </button>
       </div>
 
-      <div className="max-w-5xl mx-auto px-5 py-4">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Photo / Visual card */}
-          <div className="md:col-span-5 bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs relative">
-            <div className="relative bg-gradient-to-br from-slate-100 to-slate-50 aspect-square flex items-center justify-center">
-              <span className="text-8xl sm:text-9xl transition-transform hover:scale-105 duration-300">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Visual Icon / Illustration Block */}
+          <div className="md:col-span-5 bg-gray-100 rounded-2xl overflow-hidden relative">
+            <div className="relative aspect-square flex items-center justify-center">
+              <span className="text-9xl transition-transform hover:scale-105 duration-200">
                 {icon}
               </span>
 
               {/* Route badge */}
-              <div className="absolute top-4 right-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs ${
+              <div className="absolute top-4 left-4">
+                <span className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${
                   item.route === 'reuse'
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-emerald-500 text-white'
                     : item.route === 'ewaste'
                       ? 'bg-rose-500 text-white'
                       : 'bg-amber-500 text-white'
@@ -117,144 +130,168 @@ export default function ItemDetailPage() {
 
               {/* Status Overlay */}
               {isClaimed && !claimed && (
-                <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center">
-                  <div className="bg-white px-5 py-2.5 rounded-2xl shadow-xl text-center">
-                    <p className="font-extrabold text-slate-800 text-base">Claimed</p>
-                    <p className="text-[11px] text-slate-500">Reserved by a neighbour</p>
+                <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center">
+                  <div className="bg-white px-6 py-3 rounded-xl text-center">
+                    <p className="font-extrabold text-gray-900 text-base uppercase">Claimed</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Reserved by a neighbour</p>
                   </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Right Column: Information, Seller info, Claim Action */}
-          <div className="md:col-span-7 space-y-4">
-            <div className="bg-white rounded-3xl shadow-xs border border-slate-200/80 p-6 space-y-5">
-              {/* Header Title & Price */}
-              <div>
-                <h1 className="text-2xl font-bold text-slate-800 leading-snug">{item.title}</h1>
-                <div className="flex items-center gap-3 mt-2.5">
-                  {item.priceType === 'free' ? (
-                    <span className="text-green-600 font-extrabold text-3xl">Free</span>
-                  ) : item.priceType === 'scrap' ? (
-                    <span className="text-amber-600 font-bold text-xl">Scrap / Recycler</span>
-                  ) : (
-                    <span className="text-slate-800 font-extrabold text-3xl">₹{item.askingPrice}</span>
-                  )}
-
-                  {item.priceType === 'price' && item.suggestedPrice && (
-                    <span className="text-xs text-slate-400 font-medium">
-                      Suggested range: ₹{item.suggestedPrice.min}–₹{item.suggestedPrice.max}
-                    </span>
-                  )}
-                </div>
+          {/* Right Column: Details, Seller, Action */}
+          <div className="md:col-span-7 bg-gray-100 rounded-2xl p-6 sm:p-8 space-y-6">
+            {/* Title & Price Header */}
+            <div>
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                Category: {item.category}
               </div>
+              <h1 className="font-extrabold text-3xl sm:text-4xl text-gray-900 tracking-tight leading-tight">
+                {item.title}
+              </h1>
 
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${conditionColors[item.condition] || conditionColors.na}`}>
-                  {conditionLabels[item.condition] || item.condition}
-                </span>
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 capitalize flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5" /> {item.category}
-                </span>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 ${daysLeft <= 2 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500'}`}>
-                  <Clock className="w-3.5 h-3.5" /> {daysLeft}d remaining
-                </span>
+              <div className="flex items-baseline gap-4 mt-3">
+                {item.priceType === 'free' ? (
+                  <span className="font-extrabold text-3xl text-emerald-600">
+                    Free
+                  </span>
+                ) : item.priceType === 'scrap' ? (
+                  <span className="font-extrabold text-2xl text-amber-600">
+                    Scrap / Recycle
+                  </span>
+                ) : (
+                  <span className="font-extrabold text-3xl text-blue-600">
+                    ₹{item.askingPrice}
+                  </span>
+                )}
+
+                {item.priceType === 'price' && item.suggestedPrice && (
+                  <span className="text-xs font-medium text-gray-500">
+                    Suggested range: ₹{item.suggestedPrice.min}–₹{item.suggestedPrice.max}
+                  </span>
+                )}
               </div>
+            </div>
 
-              {/* Description */}
-              <div>
-                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Item Description</h3>
-                <p className="text-sm text-slate-700 leading-relaxed bg-slate-50/70 p-3.5 rounded-2xl border border-slate-100">
-                  {item.description || 'No additional description provided.'}
-                </p>
-              </div>
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className={`px-3 py-1 rounded-md font-bold ${conditionColors[item.condition] || conditionColors.na}`}>
+                {conditionLabels[item.condition] || item.condition}
+              </span>
+              <span className="px-3 py-1 rounded-md font-bold bg-white text-gray-700 capitalize flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5" /> {item.category}
+              </span>
+              <span className={`px-3 py-1 rounded-md font-bold flex items-center gap-1.5 ${
+                daysLeft <= 2
+                  ? 'bg-rose-100 text-rose-700'
+                  : 'bg-white text-gray-700'
+              }`}>
+                <Clock className="w-3.5 h-3.5" /> {daysLeft}d remaining
+              </span>
+            </div>
 
-              {/* Posted by User */}
-              {poster && (
-                <div className="flex items-center gap-3 bg-slate-50 rounded-2xl p-3.5 border border-slate-100">
-                  <div className="w-10 h-10 bg-green-600 text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-xs">
+            {/* Description */}
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                Item Description
+              </h3>
+              <p className="text-sm text-gray-800 leading-relaxed bg-white p-4 rounded-xl font-medium">
+                {item.description || 'No additional description provided.'}
+              </p>
+            </div>
+
+            {/* Posted By User */}
+            {poster && (
+              <div className="bg-white rounded-xl p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500 text-white font-extrabold text-sm flex items-center justify-center">
                     {poster.avatar}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-800">{poster.name}</p>
-                    <p className="text-xs text-slate-400">Community Member • Posted {new Date(item.postedAt).toLocaleDateString()}</p>
-                  </div>
-                  <span className="text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                    Verified
-                  </span>
-                </div>
-              )}
-
-              {/* Expiry Warning */}
-              {daysLeft <= 2 && daysLeft > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start gap-2.5">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-                  <p className="text-xs text-amber-800">
-                    This item expires in {daysLeft} day{daysLeft !== 1 ? 's' : ''}. Unclaimed items may be routed to Scrap Day.
-                  </p>
-                </div>
-              )}
-
-              {/* Contact Info (Displayed if user claimed it) */}
-              {claimed && contactInfo && (
-                <div className="bg-green-50 border border-green-200 rounded-2xl p-5 space-y-3 animate-fade-in">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    <h3 className="font-bold text-green-800">Item Successfully Claimed!</h3>
-                  </div>
-                  <p className="text-xs text-green-700">Contact the resident to coordinate pickup within your community:</p>
-                  <div className="space-y-2 pt-1">
-                    <div className="flex items-center gap-3 bg-white rounded-xl p-3 border border-green-100">
-                      <Phone className="w-4 h-4 text-green-600" />
-                      <span className="text-sm font-medium text-slate-800">{contactInfo.phone || 'Phone shared via app'}</span>
-                    </div>
-                    <div className="flex items-center gap-3 bg-white rounded-xl p-3 border border-green-100">
-                      <MessageSquare className="w-4 h-4 text-green-600" />
-                      <span className="text-sm font-medium text-slate-800">{contactInfo.email}</span>
-                    </div>
+                  <div>
+                    <p className="font-bold text-sm text-gray-900">{poster.name}</p>
+                    <p className="text-xs text-gray-500">Community Member • Posted {new Date(item.postedAt).toLocaleDateString()}</p>
                   </div>
                 </div>
-              )}
+                <span className="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-md">
+                  Verified
+                </span>
+              </div>
+            )}
 
-              {/* Action Buttons */}
-              <div className="pt-2">
-                {!isOwner && !isClaimed && (
-                  <button
-                    onClick={handleClaim}
-                    disabled={claiming}
-                    className="w-full py-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold text-base rounded-2xl shadow-lg shadow-green-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
-                  >
-                    {claiming ? (
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <CheckCircle2 className="w-5 h-5" />
+            {/* Expiry Warning */}
+            {daysLeft <= 2 && daysLeft > 0 && (
+              <div className="bg-amber-100 rounded-xl p-3.5 flex items-start gap-2.5 text-xs text-amber-900 font-semibold">
+                <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                <span>
+                  This item expires in {daysLeft} day{daysLeft !== 1 ? 's' : ''}. Unclaimed goods are routed to Scrap Day.
+                </span>
+              </div>
+            )}
+
+            {/* Contact Info (Revealed on claim) */}
+            {claimed && contactInfo && (
+              <div className="bg-emerald-50 rounded-xl p-5 space-y-3 animate-fade-in">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                  <h3 className="font-extrabold text-emerald-900 text-base">
+                    Item Successfully Claimed!
+                  </h3>
+                </div>
+                <p className="text-xs text-emerald-700 font-medium">
+                  Coordinate pickup directly within your residence facility:
+                </p>
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center gap-3 bg-white rounded-lg p-3">
+                    <Phone className="w-4 h-4 text-emerald-600" />
+                    <span className="text-sm font-bold text-gray-900">{contactInfo.phone || 'Phone verified via app'}</span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white rounded-lg p-3">
+                    <MessageSquare className="w-4 h-4 text-emerald-600" />
+                    <span className="text-sm font-bold text-gray-900">{contactInfo.email}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="pt-2">
+              {!isOwner && !isClaimed && (
+                <button
+                  onClick={handleClaim}
+                  disabled={claiming}
+                  className="w-full py-4 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold text-base rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer hover:scale-105 disabled:opacity-60"
+                >
+                  {claiming ? (
+                    <span>Claiming...</span>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>
                         {item.priceType === 'free'
                           ? 'Claim for Free'
                           : item.priceType === 'scrap'
                             ? 'Claim for Scrap'
                             : `Claim for ₹${item.askingPrice}`}
-                      </>
-                    )}
-                  </button>
-                )}
+                      </span>
+                    </>
+                  )}
+                </button>
+              )}
 
-                {!isOwner && isClaimed && !claimed && (
-                  <div className="bg-slate-100 border border-slate-200 rounded-2xl p-4 text-center">
-                    <p className="text-sm text-slate-700 font-semibold">This item has already been claimed</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Another community resident claimed this item in this session.</p>
-                  </div>
-                )}
+              {!isOwner && isClaimed && !claimed && (
+                <div className="bg-gray-200/80 rounded-xl p-4 text-center">
+                  <p className="text-sm font-bold text-gray-800">This item has been claimed</p>
+                  <p className="text-xs text-gray-500 mt-0.5 font-medium">Another community resident claimed this item in this session.</p>
+                </div>
+              )}
 
-                {isOwner && (
-                  <div className="bg-sky-50 border border-sky-200 rounded-2xl p-3.5 text-center">
-                    <p className="text-sm text-sky-800 font-medium">This is your listing</p>
-                    <p className="text-xs text-sky-600 mt-0.5">Other residents in {user?.communityId || 'your circle'} can claim it.</p>
-                  </div>
-                )}
-              </div>
+              {isOwner && (
+                <div className="bg-blue-50 rounded-xl p-4 text-center">
+                  <p className="text-sm font-bold text-blue-900">This is your listing</p>
+                  <p className="text-xs text-blue-700 mt-0.5 font-medium">Other residents in your circle can view and claim it.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

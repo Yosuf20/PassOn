@@ -6,7 +6,7 @@ import ItemCard from '../components/ItemCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 
-const categories = ['all', 'electronics', 'books', 'home', 'appliances', 'fitness', 'furniture', 'clothing', 'paper'];
+const categories = ['all', 'electronics', 'books', 'home', 'appliances', 'fitness', 'furniture', 'clothing', 'paper', 'stationary'];
 const routes = ['all', 'reuse', 'scrap', 'ewaste'];
 const routeLabels = { all: 'All Routes', reuse: 'Reuse', scrap: 'Scrap', ewaste: 'E-Waste' };
 

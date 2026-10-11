@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ITEM_ICONS } from '../services/api';
 
@@ -25,19 +26,30 @@ const routeBadge = {
 
 export default function ItemCard({ item, compact = false }) {
   const navigate = useNavigate();
+  const [imgError, setImgError] = useState(false);
   const icon = ITEM_ICONS[item.category] || ITEM_ICONS.default;
   const route = routeBadge[item.route] || routeBadge.reuse;
+  const imageSrc = item.imageUrl || item.photo || item.image;
 
   return (
     <button
       onClick={() => navigate(`/item/${item.id}`)}
       className="w-full text-left bg-gray-100 rounded-xl overflow-hidden flat-card-interactive group flex flex-col cursor-pointer border-0"
     >
-      {/* Visual / Icon Area */}
+      {/* Visual / Image Area */}
       <div className="relative bg-gray-200/70 aspect-[4/3] w-full flex items-center justify-center overflow-hidden">
-        <span className="text-5xl group-hover:scale-110 transition-transform duration-200">
-          {icon}
-        </span>
+        {imageSrc && !imgError ? (
+          <img
+            src={imageSrc}
+            alt={item.title}
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+          />
+        ) : (
+          <span className="text-5xl group-hover:scale-110 transition-transform duration-200">
+            {icon}
+          </span>
+        )}
 
         {/* Route Badge */}
         <span className={`absolute top-2.5 left-2.5 text-[11px] font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider ${route.className}`}>

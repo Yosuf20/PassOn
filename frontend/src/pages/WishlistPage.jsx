@@ -5,7 +5,7 @@ import api, { ITEM_ICONS } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { ArrowLeft, Heart, Plus, X, Trash2, Sparkles } from 'lucide-react';
 
-const categoryOptions = ['electronics', 'books', 'home', 'appliances', 'fitness', 'furniture', 'clothing', 'paper'];
+const categoryOptions = ['electronics', 'books', 'home', 'appliances', 'fitness', 'furniture', 'clothing', 'paper', 'stationary'];
 
 export default function WishlistPage() {
   const { user, community, showToast } = useApp();

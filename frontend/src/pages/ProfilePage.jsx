@@ -277,7 +277,15 @@ export default function ProfilePage() {
                       className="flex items-center justify-between p-3.5 bg-white rounded-xl hover:bg-blue-50/50 cursor-pointer transition"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-2xl">{ITEM_ICONS[item.category] || '📦'}</span>
+                        {item.imageUrl || item.photo ? (
+                          <img
+                            src={item.imageUrl || item.photo}
+                            alt={item.title}
+                            className="w-10 h-10 rounded-lg object-cover shrink-0"
+                          />
+                        ) : (
+                          <span className="text-2xl">{ITEM_ICONS[item.category] || '📦'}</span>
+                        )}
                         <div className="min-w-0">
                           <p className="font-bold text-sm text-gray-900 truncate">{item.title}</p>
                           <p className="text-xs text-gray-500 capitalize">
@@ -319,7 +327,15 @@ export default function ProfilePage() {
                       className="flex items-center justify-between p-3.5 bg-white rounded-xl hover:bg-blue-50/50 cursor-pointer transition"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-2xl">{ITEM_ICONS[item.category] || '📦'}</span>
+                        {item.imageUrl || item.photo ? (
+                          <img
+                            src={item.imageUrl || item.photo}
+                            alt={item.title}
+                            className="w-10 h-10 rounded-lg object-cover shrink-0"
+                          />
+                        ) : (
+                          <span className="text-2xl">{ITEM_ICONS[item.category] || '📦'}</span>
+                        )}
                         <div className="min-w-0">
                           <p className="font-bold text-sm text-gray-900 truncate">{item.title}</p>
                           <p className="text-xs text-gray-500 capitalize">

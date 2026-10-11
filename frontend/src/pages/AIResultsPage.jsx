@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import api, { ITEM_ICONS } from '../services/api';
 import { ArrowLeft, Check, Trash2, ChevronDown, ChevronUp, Package, Sparkles, Image as ImageIcon } from 'lucide-react';
 
-const categories = ['electronics', 'books', 'home', 'appliances', 'fitness', 'furniture', 'clothing', 'paper'];
+const categories = ['electronics', 'books', 'home', 'appliances', 'fitness', 'furniture', 'clothing', 'paper', 'stationary'];
 
 const priceTypes = [
   { value: 'free', label: 'Free Giveaway' },
@@ -81,6 +81,8 @@ export default function AIResultsPage() {
         askingPrice: item.priceType === 'price' ? item.askingPrice : 0,
         priceType: item.priceType,
         route: item.route,
+        photo: photoPreview || item.photo || null,
+        imageUrl: photoPreview || item.imageUrl || null,
       }));
       await api.createItems(community.id, payload, user.id);
       showToast('success', `${included.length} item${included.length > 1 ? 's' : ''} listed!`);
@@ -141,28 +143,6 @@ export default function AIResultsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto w-full px-5 sm:px-8 py-6 flex-1 space-y-6">
-        {/* Provider Banner */}
-        <div className={`p-4 rounded-xl flex items-start gap-3.5 ${
-          !isMock && provider === 'groq'
-            ? 'bg-emerald-50 text-emerald-900'
-            : 'bg-amber-50 text-amber-900'
-        }`}>
-          <div className="text-2xl shrink-0 mt-0.5">
-            {!isMock && provider === 'groq' ? '⚡' : '🧪'}
-          </div>
-          <div className="text-xs">
-            <p className="font-bold text-sm">
-              {!isMock && provider === 'groq'
-                ? 'Groq Vision Model Active (Qwen 3.8 Vision)'
-                : 'Demo / Mock Analysis Mode'}
-            </p>
-            <p className="opacity-90 mt-0.5 font-medium leading-relaxed">
-              {!isMock && provider === 'groq'
-                ? 'Items, conditions, and disposal routes identified directly from photo. You can edit every field below.'
-                : 'Sample items generated. Add GROQ_API_KEY in backend/.env to run live multimodal vision analysis.'}
-            </p>
-          </div>
-        </div>
 
         {/* 2-Column Responsive Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
@@ -207,9 +187,18 @@ export default function AIResultsPage() {
                       title="Include in listing"
                     />
 
-                    <span className="text-2xl cursor-pointer" onClick={() => toggleExpand(item.id)}>
-                      {icon}
-                    </span>
+                    {photoPreview ? (
+                      <img
+                        src={photoPreview}
+                        alt={item.title}
+                        onClick={() => toggleExpand(item.id)}
+                        className="w-9 h-9 rounded-lg object-cover cursor-pointer shrink-0"
+                      />
+                    ) : (
+                      <span className="text-2xl cursor-pointer" onClick={() => toggleExpand(item.id)}>
+                        {icon}
+                      </span>
+                    )}
 
                     <div className="flex-1 min-w-0 cursor-pointer" onClick={() => toggleExpand(item.id)}>
                       <p className="font-bold text-sm text-gray-900 truncate">{item.title}</p>

@@ -6,8 +6,8 @@ import { Eye, EyeOff, ArrowRight, Recycle, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('priya@example.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -155,12 +155,6 @@ export default function LoginPage() {
           >
             {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
           </button>
-        </div>
-
-        <div className="mt-4 p-3 bg-gray-200/60 rounded-lg text-center">
-          <p className="text-xs text-gray-600 font-medium">
-            Demo Credentials Pre-filled: Click Sign In to proceed
-          </p>
         </div>
       </div>
     </div>

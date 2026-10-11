@@ -6,7 +6,7 @@ import { Users, Plus, ArrowRight, Hash, Recycle } from 'lucide-react';
 
 export default function JoinCommunityPage() {
   const [mode, setMode] = useState('join'); // 'join' | 'create'
-  const [code, setCode] = useState('SUN2026');
+  const [code, setCode] = useState('');
   const [communityName, setCommunityName] = useState('');
   const [communityType, setCommunityType] = useState('pg');
   const [description, setDescription] = useState('');

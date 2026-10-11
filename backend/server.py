@@ -41,6 +41,7 @@ def api_analyze():
     if request.method == "OPTIONS":
         return "", 204
 
+    load_dotenv(env_path, override=True)
     event = {"body": request.get_data(as_text=True)}
     result = analyze_photo(event, None)
     
@@ -52,12 +53,14 @@ def api_analyze():
 @app.route("/api/health", methods=["GET"])
 def health():
     """Health check — also reports whether Groq is configured."""
+    load_dotenv(env_path, override=True)
     has_key = bool(os.environ.get("GROQ_API_KEY", "").strip())
     return jsonify({
         "status": "ok",
         "groq_configured": has_key,
         "provider": "groq" if has_key else "mock",
     })
+
 
 
 if __name__ == "__main__":

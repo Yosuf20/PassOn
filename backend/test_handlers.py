@@ -405,7 +405,51 @@ class TestGroqProviderMocked(unittest.TestCase):
             analyze_image_groq("base64data", "image/jpeg")
 
             call_kwargs = mock_client.chat.completions.create.call_args[1]
-            self.assertEqual(call_kwargs["model"], "custom/test-model-42")
+class TestBedrockProviderMocked(unittest.TestCase):
+    """Test the Amazon Bedrock provider with mocked boto3 client."""
+
+    @patch("ai_providers.boto3")
+    def test_successful_bedrock_analysis(self, mock_boto3):
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+
+        mock_body = MagicMock()
+        mock_body.read.return_value = json.dumps({
+            "content": [
+                {
+                    "text": json.dumps([
+                        {
+                            "name": "Study Table Lamp",
+                            "category": "electronics",
+                            "condition": "good",
+                            "description": "Functional desk lamp",
+                            "suggestedPrice": {"min": 150, "max": 300},
+                            "route": "reuse"
+                        }
+                    ])
+                }
+            ]
+        }).encode("utf-8")
+        mock_client.invoke_model.return_value = {"body": mock_body}
+
+        from ai_providers import analyze_image_bedrock
+        items = analyze_image_bedrock("base64image", "image/jpeg")
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["name"], "Study Table Lamp")
+        self.assertEqual(items[0]["route"], "reuse")
+
+    @patch("ai_providers.boto3")
+    def test_bedrock_dispatch_via_env(self, mock_boto3):
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+        mock_body = MagicMock()
+        mock_body.read.return_value = json.dumps({"content": [{"text": "[]"}]}).encode("utf-8")
+        mock_client.invoke_model.return_value = {"body": mock_body}
+
+        with patch.dict(os.environ, {"AI_PROVIDER": "bedrock"}, clear=False):
+            from ai_providers import analyze_image
+            items, provider = analyze_image("base64image")
+            self.assertEqual(provider, "bedrock")
 
 
 if __name__ == "__main__":

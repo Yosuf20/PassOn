@@ -18,11 +18,20 @@ Parameters:
     Type: String
     Default: dev
     AllowedValues: [dev, staging, prod]
+  AiProvider:
+    Type: String
+    Default: "bedrock"
+    AllowedValues: [bedrock, groq, mock]
+    Description: Multimodal AI vision provider (Amazon Bedrock or Groq)
+  BedrockModelId:
+    Type: String
+    Default: "anthropic.claude-3-sonnet-20240229-v1:0"
+    Description: Amazon Bedrock multimodal model ID
   GroqApiKey:
     Type: String
     Default: ""
     NoEcho: true
-    Description: Groq API Key for vision analysis
+    Description: Groq API Key for vision analysis (fallback)
   GroqVisionModel:
     Type: String
     Default: "qwen/qwen3.8-27b"
@@ -117,8 +126,16 @@ Resources:
       Handler: handlers.analyze_photo
       MemorySize: 512
       Timeout: 60
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: "*"
       Environment:
         Variables:
+          AI_PROVIDER: !Ref AiProvider
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
           GROQ_API_KEY: !Ref GroqApiKey
           GROQ_VISION_MODEL: !Ref GroqVisionModel
       Events:

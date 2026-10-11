@@ -41,8 +41,6 @@ PassOn has a responsive web experience with these main flows:
 | 💚 **Community participation** | Save wanted items, view notifications, and explore Scrap Day | Keeping reuse and responsible disposal visible |
 | 🌍 **Impact dashboard** | View community impact indicators | A snapshot of the project’s sustainability goal |
 
-**Add product screenshots here before publishing:** the AI results page, marketplace, and impact dashboard would show the experience faster than a long description. Store real screenshots in `docs/screenshots/` and link them here once available; no screenshots are assumed to exist yet.
-
 ---
 
 ## What you can do

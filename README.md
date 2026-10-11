@@ -113,8 +113,6 @@ The latest project status reported:
 - **38 backend tests passed** using `python backend/test_handlers.py`.
 - **Frontend production build succeeded** using `npm run build`.
 
-These are the latest reported results, not a guarantee about every checkout or environment. Re-run the commands below before a submission or demo.
-
 ---
 
 ## Where the live data comes from
@@ -268,7 +266,5 @@ PassOn/
 <div align="center">
 
 **PassOn: make passing things on easier than throwing them away.**
-
-*Built as a hackathon project. Live deployment, recycling partnerships, and real-world environmental outcomes should be verified separately.*
 
 </div>

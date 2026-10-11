@@ -249,6 +249,11 @@ const api = {
         detectedItems = [
           { name: 'Pile of Old Newspapers (3kg)', category: 'paper', condition: 'good', suggestedPrice: { min: 0, max: 30 }, route: 'scrap', description: 'Bundled stacks of old newspapers suitable for periodic scrap collection.' },
         ];
+      } else if (fileName.includes('bottle') || fileName.includes('milton') || fileName.includes('flask') || fileName.includes('water')) {
+        detectedItems = [
+          { name: 'Milton Stainless Steel Water Bottle (750ml)', category: 'home', condition: 'good', suggestedPrice: { min: 150, max: 250 }, route: 'reuse', description: 'Stainless steel Milton insulated water bottle with flip-top lid. Clean and functional.' },
+        ];
+
       } else {
         detectedItems = [
           { name: 'Study Table Lamp', category: 'electronics', condition: 'good', suggestedPrice: { min: 150, max: 300 }, route: 'reuse', description: 'Adjustable LED desk lamp with flexible arm. Functional and clean.' },

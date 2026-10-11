@@ -2,14 +2,21 @@
 PassOn — AI Provider abstraction layer.
 
 Modular design: each provider implements `analyze_image(image_base64, mime_type) -> list[dict]`.
-Currently supported: Groq (vision). Placeholder: Amazon Bedrock.
+Supported providers: Amazon Bedrock (multimodal vision), Groq (vision), Mock (offline/tests).
 """
 import json
 import os
 import re
 import logging
+import copy
 
 logger = logging.getLogger(__name__)
+
+# Try importing boto3 for Amazon Bedrock runtime
+try:
+    import boto3
+except ImportError:
+    boto3 = None
 
 # ─── Structured response schema ───────────────────────────────────────
 ANALYSIS_SCHEMA = {
@@ -206,22 +213,92 @@ def analyze_image_mock(image_base64=None, mime_type=None):
     return copy.deepcopy(MOCK_RESPONSE)
 
 
+# ─── Amazon Bedrock Provider (Claude 3 / Titan Multimodal) ─────────────
+
+DEFAULT_BEDROCK_MODEL = "anthropic.claude-3-sonnet-20240229-v1:0"
+BEDROCK_MODEL_ID = os.environ.get("BEDROCK_MODEL_ID", DEFAULT_BEDROCK_MODEL)
+
+
+def analyze_image_bedrock(image_base64, mime_type="image/jpeg"):
+    """
+    Send an image to Amazon Bedrock multimodal vision model
+    and return structured item analysis conforming to ANALYSIS_SCHEMA.
+    """
+    if boto3 is None:
+        raise RuntimeError("boto3 package is not installed. Run: pip install boto3")
+
+    region = os.environ.get("AWS_REGION", os.environ.get("AWS_DEFAULT_REGION", "us-east-1"))
+    model_id = os.environ.get("BEDROCK_MODEL_ID", DEFAULT_BEDROCK_MODEL).strip() or DEFAULT_BEDROCK_MODEL
+
+    client = boto3.client("bedrock-runtime", region_name=region)
+
+    payload = {
+        "anthropic_version": "bedrock-2023-05-31",
+        "max_tokens": 2048,
+        "temperature": 0.3,
+        "system": SYSTEM_PROMPT,
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": mime_type,
+                            "data": image_base64,
+                        },
+                    },
+                    {
+                        "type": "text",
+                        "text": "Identify all distinct physical items in this photo and categorize them.",
+                    },
+                ],
+            }
+        ],
+    }
+
+    try:
+        response = client.invoke_model(
+            modelId=model_id,
+            body=json.dumps(payload),
+            contentType="application/json",
+            accept="application/json",
+        )
+        response_body = json.loads(response["body"].read().decode("utf-8"))
+        raw_text = response_body["content"][0]["text"]
+        return _parse_ai_response(raw_text)
+    except Exception as e:
+        error_msg = str(e)
+        logger.error("Amazon Bedrock invocation error: %s", error_msg)
+        raise RuntimeError(f"Bedrock API error: {error_msg}")
+
+
 # ─── Provider registry ────────────────────────────────────────────────
 
 _PROVIDERS = {
+    "bedrock": analyze_image_bedrock,
     "groq": analyze_image_groq,
     "mock": analyze_image_mock,
-    # Future: "bedrock": analyze_image_bedrock,
 }
 
 
 def get_provider(name=None):
     """
     Return the analysis function for the given provider name.
-    Defaults to GROQ_API_KEY presence → groq, else mock.
+    Priority if not explicitly specified:
+    1. AI_PROVIDER environment variable ('bedrock', 'groq', or 'mock')
+    2. BEDROCK_MODEL_ID or AWS_EXECUTION_ENV -> 'bedrock'
+    3. GROQ_API_KEY -> 'groq'
+    4. Default -> 'mock'
     """
     if name is None:
-        if os.environ.get("GROQ_API_KEY", "").strip():
+        env_provider = os.environ.get("AI_PROVIDER", "").strip().lower()
+        if env_provider in _PROVIDERS:
+            name = env_provider
+        elif os.environ.get("BEDROCK_MODEL_ID"):
+            name = "bedrock"
+        elif os.environ.get("GROQ_API_KEY", "").strip():
             name = "groq"
         else:
             name = "mock"
@@ -237,12 +314,19 @@ def analyze_image(image_base64, mime_type="image/jpeg", provider_name=None):
     High-level entry point: analyze an image using the configured provider.
     Returns (items_list, provider_used_name).
     """
-    if provider_name is None:
-        if os.environ.get("GROQ_API_KEY", "").strip():
-            provider_name = "groq"
-        else:
-            provider_name = "mock"
-
     provider_fn = get_provider(provider_name)
+    if provider_name is None:
+        env_provider = os.environ.get("AI_PROVIDER", "").strip().lower()
+        if env_provider in _PROVIDERS:
+            actual_name = env_provider
+        elif os.environ.get("BEDROCK_MODEL_ID"):
+            actual_name = "bedrock"
+        elif os.environ.get("GROQ_API_KEY", "").strip():
+            actual_name = "groq"
+        else:
+            actual_name = "mock"
+    else:
+        actual_name = provider_name
+
     items = provider_fn(image_base64, mime_type)
-    return items, provider_name
+    return items, actual_name

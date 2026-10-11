@@ -8,7 +8,8 @@ A community reuse platform for hostels, PGs, campuses, flat-shares, and housing 
 
 ![Frontend](https://img.shields.io/badge/frontend-React%20%2B%20Vite-61DAFB)
 ![Backend](https://img.shields.io/badge/backend-Python%20%2B%20Flask-lightgrey)
-![AI](https://img.shields.io/badge/AI-Groq%20Vision-7C5CBF)
+![AI](https://img.shields.io/badge/AI-Amazon%20Bedrock%20%2B%20Multimodal-FF9900)
+![Cloud](https://img.shields.io/badge/cloud-AWS%20SAM%20%2B%20Lambda-orange)
 ![Project](https://img.shields.io/badge/status-hackathon%20project-orange)
 
 [Getting started](#getting-started) · [How it works](#how-it-works) · [Honest by design](#honest-by-design)
@@ -74,8 +75,8 @@ PassOn has a responsive web experience with these main flows:
 ```mermaid
 flowchart TD
     A[Resident uploads item photo] --> B[PassOn web app]
-    B --> C[Local Python backend]
-    C --> D[Groq vision model]
+    B --> C[Python backend / AWS Lambda]
+    C --> D["Multimodal Vision AI (Amazon Bedrock / Groq)"]
     D --> E[AI suggests items and listing details]
     E --> F[Resident reviews and edits]
     F --> G[Publish to community marketplace]
@@ -94,7 +95,7 @@ PassOn aims to help reduce waste, but a dashboard or a successful demo is not pr
 | Area | Current status |
 |---|---|
 | Responsive web experience | Implemented |
-| Photo upload and AI listing suggestions | Implemented in the local Groq-powered flow |
+| Photo upload and AI listing suggestions | Implemented with multi-provider vision pipeline (Amazon Bedrock & local fallback) |
 | Mock fallback | Available for exploration without live AI |
 | Marketplace, wishlist, claiming, and impact views | Present in the demo experience; parts use mock/demo data |
 | API contract and AWS infrastructure definition | Present in the repository as a foundation for future integration |
@@ -110,14 +111,14 @@ This distinction matters: PassOn demonstrates a workflow intended to support reu
 
 The latest project status reported:
 
-- **38 backend tests passed** using `python backend/test_handlers.py`.
+- **40 backend tests passed** using `python backend/test_handlers.py`.
 - **Frontend production build succeeded** using `npm run build`.
 
 ---
 
 ## Where the live data comes from
 
-- **AI item suggestions:** when configured, the local Python backend sends image-analysis requests to Groq using the `qwen/qwen3.8-27b` model.
+- **AI item suggestions:** the backend features a modular AI provider architecture (`ai_providers.py`). In cloud deployments, image-analysis requests route to **Amazon Bedrock** (Anthropic Claude 3 / Titan Multimodal) defined in our AWS SAM template. For local development, requests can use Groq or the built-in offline mock mode.
 - **Mock/demo content:** some community and marketplace experiences use demo data so the UI can be explored without a fully connected production backend.
 - **Environmental indicators:** dashboard figures are illustrative estimates. They should not be presented as measured impact.
 - **AWS:** the repository includes an AWS SAM template and OpenAPI contract. These files describe a foundation for deployment; they do not mean the cloud service is already live.
@@ -129,11 +130,11 @@ The latest project status reported:
 | Part | Tool | Why |
 |---|---|---|
 | Frontend | React, Vite, Tailwind CSS | Responsive web interface |
-| Backend | Python, Flask | Local API for image-analysis requests |
-| Vision AI | Groq (`qwen/qwen3.8-27b`) | Generates item-identification and listing suggestions from images |
+| Backend | Python, Flask, AWS Lambda | Local API and serverless microservices for item handling and analysis |
+| Vision AI | Amazon Bedrock (Claude 3 / Titan) & Groq | Multimodal vision analysis to identify items, condition, and disposal routes from photos |
 | API contract | OpenAPI | Documents API design and expected request/response shapes |
-| Infrastructure definition | AWS SAM | Starting point for a serverless AWS deployment |
-| Testing | Python test suite + frontend build | Checks backend behaviour and production frontend compilation |
+| Infrastructure definition | AWS SAM | Serverless application model for AWS Lambda, API Gateway & DynamoDB |
+| Testing | Python test suite (unittest) + frontend build | Checks backend behaviour, AI dispatch, and production frontend compilation |
 
 ---
 
@@ -143,7 +144,7 @@ The latest project status reported:
 
 - Node.js and npm
 - Python
-- A Groq API key if you want to use live image analysis
+- An AWS account with Amazon Bedrock access (e.g. Anthropic Claude 3 Sonnet) or a Groq API key for live AI analysis (or run offline with the built-in mock mode)
 
 ### 1. Start the frontend
 
@@ -172,11 +173,30 @@ From the repository root, install the backend dependencies:
 pip install -r backend/requirements.txt
 ```
 
-Create `backend/.env` with your own Groq API key:
+Create `backend/.env` with your preferred AI provider configuration:
 
+**Option A — Amazon Bedrock (Production / AWS setup):**
 ```env
+AI_PROVIDER=bedrock
+AWS_REGION=us-east-1
+BEDROCK_MODEL_ID=anthropic.claude-3-sonnet-20240229-v1:0
+# Ensure AWS credentials are configured via `aws configure` or environment variables:
+# AWS_ACCESS_KEY_ID=your_access_key
+# AWS_SECRET_ACCESS_KEY=your_secret_key
+BACKEND_PORT=3001
+```
+
+**Option B — Groq (Fast local alternative):**
+```env
+AI_PROVIDER=groq
 GROQ_API_KEY=your_groq_api_key
 GROQ_VISION_MODEL=qwen/qwen3.8-27b
+BACKEND_PORT=3001
+```
+
+**Option C — Mock Mode (No external API keys required):**
+```env
+AI_PROVIDER=mock
 BACKEND_PORT=3001
 ```
 
@@ -186,7 +206,7 @@ Then run:
 python backend/server.py
 ```
 
-Keep `.env` private and never commit your API key. If live AI is not configured or the backend is unavailable, mock mode can be used to explore the experience.
+Keep `.env` private and never commit your API keys or credentials. If live AI is not configured or the backend is unavailable, mock mode is automatically used to explore the experience.
 
 ### 3. Run backend tests
 
@@ -210,11 +230,13 @@ npm run build
 | Problem | What to check |
 |---|---|
 | Frontend won't start | Confirm Node.js/npm are installed, run `npm install` in `frontend/`, then retry `npm run dev` |
-| AI analysis uses mock results | Check that the backend is running and `GROQ_API_KEY` is set in `backend/.env` |
-| Backend cannot find its API key | Check the `.env` file path and restart the backend after editing it |
+| AI analysis uses mock results | Check that the backend is running and either AWS credentials (for Bedrock) or `GROQ_API_KEY` is set in `backend/.env` |
+| Backend cannot find credentials | Check the `.env` file path and restart the backend after editing it |
+| Bedrock reports access/model error | Confirm model access for Anthropic Claude 3 Sonnet is enabled in your AWS Bedrock console for your region (`us-east-1`), and your IAM credentials have `bedrock:InvokeModel` permissions |
 | Groq reports a model error | Confirm the configured model is available to your Groq account and update `GROQ_VISION_MODEL` if needed |
 | Frontend build fails | Run `npm install` in `frontend/` and inspect the first build error |
 | Tests fail | Run the test command from the repository root and inspect the specific failing test |
+
 
 ---
 

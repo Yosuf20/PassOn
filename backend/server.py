@@ -64,10 +64,11 @@ if __name__ == "__main__":
     port = int(os.environ.get("BACKEND_PORT", 3001))
     has_key = bool(os.environ.get("GROQ_API_KEY", "").strip())
     
-    print(f"\n🌱 PassOn Backend — Local Dev Server")
+    print(f"\n[PassOn Backend] Local Dev Server")
     print(f"   Port:      {port}")
     print(f"   AI Mode:   {'Groq Vision (real AI)' if has_key else 'Mock (no GROQ_API_KEY)'}")
     print(f"   Endpoint:  http://localhost:{port}/api/analyze")
     print(f"   Health:    http://localhost:{port}/api/health\n")
+
     
     app.run(host="0.0.0.0", port=port, debug=True)

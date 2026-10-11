@@ -133,16 +133,19 @@ export default function JoinCommunityPage() {
               <div className="flex items-start gap-3">
                 <Users className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" strokeWidth={2.5} />
                 <div className="text-xs">
-                  <p className="font-bold text-emerald-900">Demo circles to try:</p>
-                  <p className="text-emerald-700 mt-1">
+                  <p className="font-bold text-emerald-900">Demo circle to try:</p>
+                  <button
+                    type="button"
+                    onClick={() => setCode('SUN2026')}
+                    className="text-emerald-700 hover:text-emerald-900 mt-1 font-semibold block text-left transition hover:underline"
+                    title="Click to fill SUN2026"
+                  >
                     <strong>SUN2026</strong> — Sunshine PG (24 members)
-                  </p>
-                  <p className="text-emerald-700">
-                    <strong>GVA2026</strong> — Green Valley Apts (56 members)
-                  </p>
+                  </button>
                 </div>
               </div>
             </div>
+
 
             <button
               type="submit"

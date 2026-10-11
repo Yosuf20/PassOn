@@ -133,11 +133,13 @@ const api = {
   async getItems(communityId, filters = {}) {
     await delay(300);
     let items = [...MOCK_ITEMS].filter(i => i.communityId === communityId);
+    if (items.length === 0) items = [...MOCK_ITEMS];
     if (filters.status) items = items.filter(i => i.status === filters.status);
     if (filters.category) items = items.filter(i => i.category === filters.category);
     if (filters.route) items = items.filter(i => i.route === filters.route);
     return items;
   },
+
 
   async getItem(itemId) {
     await delay(200);

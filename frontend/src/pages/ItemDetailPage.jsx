@@ -31,6 +31,7 @@ export default function ItemDetailPage() {
   const [claiming, setClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const [contactInfo, setContactInfo] = useState(null);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     loadItem();
@@ -110,10 +111,19 @@ export default function ItemDetailPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Left Column: Visual Icon / Illustration Block */}
           <div className="md:col-span-5 bg-gray-100 rounded-2xl overflow-hidden relative">
-            <div className="relative aspect-square flex items-center justify-center">
-              <span className="text-9xl transition-transform hover:scale-105 duration-200">
-                {icon}
-              </span>
+            <div className="relative aspect-square flex items-center justify-center bg-gray-200/50">
+              {(item.imageUrl || item.photo) && !imgError ? (
+                <img
+                  src={item.imageUrl || item.photo}
+                  alt={item.title}
+                  onError={() => setImgError(true)}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-9xl transition-transform hover:scale-105 duration-200">
+                  {icon}
+                 </span>
+              )}
 
               {/* Route badge */}
               <div className="absolute top-4 left-4">

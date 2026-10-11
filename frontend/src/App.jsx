@@ -59,11 +59,11 @@ function RootRedirect() {
 
 export default function App() {
   return (
-    <div className="min-h-dvh flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-green-100 selection:text-green-800">
+    <div className="min-h-dvh flex flex-col bg-white text-gray-900 font-sans antialiased selection:bg-blue-500 selection:text-white">
       <Toast />
       <TopNavbar />
 
-      <main className="flex-1 w-full max-w-5xl lg:max-w-6xl mx-auto bg-slate-50 relative min-h-dvh">
+      <main className="flex-1 w-full max-w-7xl mx-auto bg-white relative min-h-dvh">
         <Routes>
           {/* Public Authentication */}
           <Route

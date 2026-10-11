@@ -1,4 +1,4 @@
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import {
   Recycle,
@@ -10,13 +10,10 @@ import {
   CalendarDays,
   Bell,
   User,
-  LogOut,
-  ChevronDown
 } from 'lucide-react';
 
 export default function TopNavbar() {
-  const { user, community, logout } = useApp();
-  const navigate = useNavigate();
+  const { user, community } = useApp();
   const location = useLocation();
 
   // Hide on public / setup routes
@@ -26,26 +23,31 @@ export default function TopNavbar() {
   const navLinks = [
     { to: '/home', label: 'Home', icon: Home },
     { to: '/marketplace', label: 'Marketplace', icon: Search },
-    { to: '/clearing-out', label: 'Clearing Out', icon: Sparkles, highlight: true },
+    { to: '/clearing-out', label: 'Clear Out', icon: Sparkles, highlight: true },
     { to: '/wishlist', label: 'Wishlist', icon: Heart },
     { to: '/scrap-day', label: 'Scrap Day', icon: CalendarDays },
     { to: '/impact', label: 'Impact', icon: TrendingUp },
   ];
 
   return (
-    <header className="hidden md:block sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
-        {/* Brand & Community */}
-        <div className="flex items-center gap-4 shrink-0">
-          <NavLink to="/home" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-green-700 to-emerald-500 flex items-center justify-center text-white shadow-sm shadow-green-600/30 group-hover:scale-105 transition">
-              <Recycle className="w-5 h-5" />
+    <header className="hidden md:block sticky top-0 z-40 bg-white border-b-2 border-gray-100">
+      <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between gap-6">
+        {/* Brand & Community Badge */}
+        <div className="flex items-center gap-3 shrink-0">
+          <NavLink to="/home" className="flex items-center gap-3 group">
+            <div className="w-11 h-11 rounded-lg bg-blue-500 text-white flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+              <Recycle className="w-6 h-6" strokeWidth={2.5} />
             </div>
             <div>
-              <span className="font-extrabold text-base tracking-tight text-slate-800 flex items-center gap-1">
-                PassOn <span className="text-[10px] bg-green-100 text-green-800 font-semibold px-1.5 py-0.2 rounded-sm uppercase tracking-wider">MVP</span>
-              </span>
-              <span className="text-[11px] text-slate-400 block -mt-0.5 truncate max-w-[140px] font-medium">
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-xl tracking-tight text-gray-900 leading-none">
+                  PassOn
+                </span>
+                <span className="text-[11px] font-bold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                  Community
+                </span>
+              </div>
+              <span className="text-xs text-gray-500 block mt-1 font-medium truncate max-w-[160px]">
                 {community?.name || 'Local Circle'}
               </span>
             </div>
@@ -59,53 +61,55 @@ export default function TopNavbar() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                `flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   highlight
                     ? isActive
-                      ? 'bg-green-600 text-white shadow-sm shadow-green-600/20'
-                      : 'bg-green-50 text-green-700 hover:bg-green-100'
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                     : isActive
-                      ? 'bg-slate-100 text-green-800'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      ? 'bg-blue-500 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 }`
               }
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4" strokeWidth={2} />
               <span>{label}</span>
             </NavLink>
           ))}
         </nav>
 
         {/* Right Actions: Notifications & User */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           <NavLink
             to="/notifications"
             className={({ isActive }) =>
-              `relative p-2.5 rounded-xl border transition ${
+              `relative p-2.5 rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-green-50 border-green-200 text-green-700'
-                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`
             }
             title="Notifications"
           >
-            <Bell className="w-4.5 h-4.5" />
+            <Bell className="w-5 h-5" strokeWidth={2} />
           </NavLink>
 
           <NavLink
             to="/profile"
             className={({ isActive }) =>
-              `flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl border transition ${
+              `flex items-center gap-2.5 pl-2 pr-3.5 py-1.5 rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-green-50 border-green-200 text-green-800'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                  ? 'bg-blue-50 text-blue-700'
+                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
               }`
             }
           >
-            <div className="w-7 h-7 rounded-lg bg-green-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+            <div className="w-8 h-8 rounded-md bg-blue-500 text-white font-bold text-xs flex items-center justify-center">
               {user?.avatar || 'U'}
             </div>
-            <span className="text-xs font-semibold max-w-[100px] truncate">{user?.name}</span>
+            <span className="text-xs font-semibold max-w-[100px] truncate">
+              {user?.name?.split(' ')[0] || 'User'}
+            </span>
           </NavLink>
         </div>
       </div>

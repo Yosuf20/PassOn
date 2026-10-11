@@ -17,10 +17,10 @@ export default function JoinCommunityPage() {
 
   const communityTypes = [
     { value: 'hostel', label: 'Hostel' },
-    { value: 'pg', label: 'PG' },
-    { value: 'apartment', label: 'Flat / Apartment' },
+    { value: 'pg', label: 'PG Facility' },
+    { value: 'apartment', label: 'Apartment' },
     { value: 'campus', label: 'Campus' },
-    { value: 'society', label: 'Housing Society' },
+    { value: 'society', label: 'Society' },
   ];
 
   const handleJoin = async (e) => {
@@ -29,9 +29,9 @@ export default function JoinCommunityPage() {
     setError('');
     setLoading(true);
     try {
-      const community = await api.joinCommunity(code.trim());
-      setCommunity(community);
-      showToast('success', `Joined ${community.name}!`);
+      const comm = await api.joinCommunity(code.trim());
+      setCommunity(comm);
+      showToast('success', `Joined ${comm.name}!`);
       navigate('/home');
     } catch (err) {
       setError(err.message);
@@ -46,9 +46,9 @@ export default function JoinCommunityPage() {
     setError('');
     setLoading(true);
     try {
-      const community = await api.createCommunity(communityName, communityType, description);
-      setCommunity(community);
-      showToast('success', `Created "${community.name}"! Invite code: ${community.code}`);
+      const comm = await api.createCommunity(communityName, communityType, description);
+      setCommunity(comm);
+      showToast('success', `Created "${comm.name}"! Invite code: ${comm.code}`);
       navigate('/home');
     } catch (err) {
       setError(err.message);
@@ -58,46 +58,53 @@ export default function JoinCommunityPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-slate-50 flex flex-col">
+    <div className="min-h-dvh bg-white flex flex-col justify-center items-center px-4 py-12 pb-safe">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-700 to-emerald-600 px-6 pt-12 pb-10 rounded-b-[2rem] relative overflow-hidden">
-        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full" />
-        <div className="absolute bottom-4 -left-8 w-24 h-24 bg-white/5 rounded-full" />
-
+      <div className="max-w-md w-full mb-6">
         <div className="flex items-center gap-2 mb-2">
-          <Recycle className="w-5 h-5 text-green-200" />
-          <span className="text-green-200 text-sm font-medium">PassOn</span>
+          <div className="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center">
+            <Recycle className="w-4 h-4" strokeWidth={2.5} />
+          </div>
+          <span className="font-extrabold text-blue-600 tracking-tight text-sm">PassOn Registry</span>
         </div>
-        <h1 className="text-2xl font-bold text-white">
-          {user ? `Hey, ${user.name.split(' ')[0]}! 👋` : 'Welcome!'}
+        <h1 className="font-extrabold text-3xl text-gray-900 tracking-tight">
+          {user ? `Hey, ${user.name.split(' ')[0]}!` : 'Welcome!'}
         </h1>
-        <p className="text-green-100 text-sm mt-1">Join your community or start a new one</p>
+        <p className="text-gray-500 text-sm mt-1">
+          Join your living circle or establish a new circular exchange community.
+        </p>
       </div>
 
-      {/* Toggle */}
-      <div className="px-6 -mt-5 max-w-md w-full mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-1.5 flex gap-1">
+      {/* Main Card */}
+      <div className="bg-gray-100 rounded-2xl max-w-md w-full p-8 animate-slide-up">
+        {/* Toggle Mode */}
+        <div className="grid grid-cols-2 p-1.5 bg-gray-200 rounded-xl mb-6 gap-1">
           <button
             onClick={() => { setMode('join'); setError(''); }}
-            className={`flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${mode === 'join' ? 'bg-green-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`py-3 px-3 rounded-lg font-bold text-sm transition-all duration-200 flex items-center justify-center gap-1.5 ${
+              mode === 'join'
+                ? 'bg-blue-500 text-white'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
           >
-            <Hash className="w-4 h-4 inline mr-1.5 -mt-0.5" />
+            <Hash className="w-4 h-4" strokeWidth={2.5} />
             Join with Code
           </button>
           <button
             onClick={() => { setMode('create'); setError(''); }}
-            className={`flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${mode === 'create' ? 'bg-green-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`py-3 px-3 rounded-lg font-bold text-sm transition-all duration-200 flex items-center justify-center gap-1.5 ${
+              mode === 'create'
+                ? 'bg-blue-500 text-white'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
           >
-            <Plus className="w-4 h-4 inline mr-1.5 -mt-0.5" />
+            <Plus className="w-4 h-4" strokeWidth={2.5} />
             Create New
           </button>
         </div>
-      </div>
 
-      {/* Form */}
-      <div className="flex-1 px-6 pt-6 pb-8 max-w-md w-full mx-auto">
         {error && (
-          <div className="bg-rose-50 text-rose-600 text-sm px-4 py-2.5 rounded-xl mb-4 font-medium animate-fade-in">
+          <div className="bg-rose-100 text-rose-700 text-sm font-semibold p-3.5 rounded-lg mb-5">
             {error}
           </div>
         )}
@@ -105,25 +112,34 @@ export default function JoinCommunityPage() {
         {mode === 'join' ? (
           <form onSubmit={handleJoin} className="space-y-5 animate-fade-in">
             <div>
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Invite Code</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-2">
+                Invite Code
+              </label>
               <input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 placeholder="e.g. SUN2026"
-                className="w-full px-4 py-4 rounded-xl bg-white border border-slate-200 text-slate-800 text-lg font-mono tracking-widest text-center placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                className="w-full px-4 py-3.5 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-2xl font-black text-center tracking-widest uppercase text-gray-900 outline-none transition"
                 maxLength={10}
               />
-              <p className="text-xs text-slate-400 mt-2 text-center">Ask your PG/hostel admin for the invite code</p>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                Ask your hostel, PG, or apartment admin for the code
+              </p>
             </div>
 
-            <div className="bg-green-50 border border-green-100 rounded-xl p-4">
+            {/* Demo Codes Callout */}
+            <div className="bg-emerald-50 rounded-xl p-4">
               <div className="flex items-start gap-3">
-                <Users className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-green-800">Demo codes to try:</p>
-                  <p className="text-xs text-green-600 mt-1"><strong>SUN2026</strong> — Sunshine PG (24 members)</p>
-                  <p className="text-xs text-green-600"><strong>GVA2026</strong> — Green Valley Apartments (56 members)</p>
+                <Users className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" strokeWidth={2.5} />
+                <div className="text-xs">
+                  <p className="font-bold text-emerald-900">Demo circles to try:</p>
+                  <p className="text-emerald-700 mt-1">
+                    <strong>SUN2026</strong> — Sunshine PG (24 members)
+                  </p>
+                  <p className="text-emerald-700">
+                    <strong>GVA2026</strong> — Green Valley Apts (56 members)
+                  </p>
                 </div>
               </div>
             </div>
@@ -131,40 +147,48 @@ export default function JoinCommunityPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold text-base rounded-xl shadow-lg shadow-green-600/30 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60"
+              className="w-full py-4 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold text-base rounded-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 hover:scale-105"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Validating...</span>
               ) : (
                 <>
-                  Join Community
-                  <ArrowRight className="w-5 h-5" />
+                  <span>Join Community</span>
+                  <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
                 </>
               )}
             </button>
           </form>
         ) : (
-          <form onSubmit={handleCreate} className="space-y-5 animate-fade-in">
+          <form onSubmit={handleCreate} className="space-y-4 animate-fade-in">
             <div>
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">Community Name</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
+                Community Name
+              </label>
               <input
                 type="text"
                 value={communityName}
                 onChange={(e) => setCommunityName(e.target.value)}
                 placeholder="e.g. Sunrise PG – HSR Layout"
-                className="w-full px-4 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-base"
+                className="w-full px-4 py-3 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-gray-900 font-medium placeholder:text-gray-400 outline-none transition text-sm"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">Type</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
+                Type of Community
+              </label>
               <div className="grid grid-cols-3 gap-2">
                 {communityTypes.map(t => (
                   <button
                     key={t.value}
                     type="button"
                     onClick={() => setCommunityType(t.value)}
-                    className={`py-2.5 px-3 rounded-xl text-sm font-medium border transition-all duration-200 ${communityType === t.value ? 'bg-green-600 text-white border-green-600 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-green-300'}`}
+                    className={`py-2.5 px-2 text-xs font-bold rounded-lg transition-all duration-150 ${
+                      communityType === t.value
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-200'
+                    }`}
                   >
                     {t.label}
                   </button>
@@ -173,27 +197,29 @@ export default function JoinCommunityPage() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">Description (optional)</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
+                Description (Optional)
+              </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="What's this community about?"
+                placeholder="Brief notes about community rules or pickup location..."
                 rows={3}
-                className="w-full px-4 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-base resize-none"
+                className="w-full px-4 py-3 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-gray-900 font-medium placeholder:text-gray-400 outline-none transition text-sm resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold text-base rounded-xl shadow-lg shadow-green-600/30 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60"
+              className="w-full py-4 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold text-base rounded-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 hover:scale-105"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Creating...</span>
               ) : (
                 <>
-                  Create Community
-                  <ArrowRight className="w-5 h-5" />
+                  <span>Create Community</span>
+                  <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
                 </>
               )}
             </button>

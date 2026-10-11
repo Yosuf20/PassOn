@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import api from '../services/api';
 import ItemCard from '../components/ItemCard';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { Bell, ChevronRight, Leaf, Recycle, TrendingUp, Heart, Package, Sparkles, CalendarDays } from 'lucide-react';
+import { Bell, ChevronRight, Recycle, TrendingUp, Heart, Package, Sparkles, CalendarDays, ArrowRight } from 'lucide-react';
 
 export default function CommunityHomePage() {
   const { user, community } = useApp();
@@ -42,183 +42,241 @@ export default function CommunityHomePage() {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  if (loading) return <LoadingSpinner message="Loading your community..." />;
+  if (loading) return <LoadingSpinner message="Loading community..." />;
 
   return (
-    <div className="pb-safe">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-green-800 via-green-700 to-emerald-600 px-5 pt-12 pb-8 relative overflow-hidden">
-        <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full" />
-        <div className="absolute bottom-0 -left-10 w-36 h-36 bg-white/5 rounded-full" />
+    <div className="pb-safe bg-white text-gray-900">
+      <div className="px-5 sm:px-8 pt-6 pb-4 space-y-6">
+        {/* Flat Hero / Community Banner */}
+        <div className="bg-blue-500 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden">
+          {/* Subtle geometric circles */}
+          <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-white/10 pointer-events-none" />
+          <div className="absolute bottom-0 -left-10 w-36 h-36 rounded-2xl bg-white/10 pointer-events-none rotate-12" />
 
-        <div className="flex items-start justify-between relative z-10">
-          <div>
-            <div className="flex items-center gap-1.5 mb-1">
-              <Recycle className="w-4 h-4 text-green-300" />
-              <span className="text-green-200 text-xs font-medium tracking-wide">PassOn</span>
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider mb-2">
+                <Recycle className="w-3.5 h-3.5" />
+                <span>Active Living Circle</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                {community.name}
+              </h1>
+              <p className="text-blue-100 text-sm mt-1 font-medium">
+                {community.memberCount} active residents sharing surplus goods & reducing waste
+              </p>
             </div>
-            <h1 className="text-xl font-bold text-white leading-snug">{community.name}</h1>
-            <p className="text-green-200 text-xs mt-0.5">{community.memberCount} members</p>
+
+            <button
+              onClick={() => navigate('/notifications')}
+              className="relative p-3 bg-white/20 hover:bg-white/30 text-white rounded-xl transition self-start sm:self-auto"
+              title="Notifications"
+            >
+              <Bell className="w-5 h-5" strokeWidth={2.5} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber-500 text-white text-[11px] font-extrabold rounded-full flex items-center justify-center">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
           </div>
-          <button
-            onClick={() => navigate('/notifications')}
-            className="relative p-2.5 bg-white/10 rounded-xl border border-white/10 hover:bg-white/20 transition"
-          >
-            <Bell className="w-5 h-5 text-white" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse-soft">
-                {unreadCount}
-              </span>
-            )}
+
+          {/* Impact Quick Ticker Blocks */}
+          {impact && (
+            <div className="grid grid-cols-3 gap-3 mt-6 relative z-10">
+              <div className="bg-white text-gray-900 rounded-xl p-3.5 text-center">
+                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Reused</p>
+                <p className="font-extrabold text-2xl text-blue-600 mt-0.5">{impact.itemsReused}</p>
+              </div>
+              <div className="bg-white text-gray-900 rounded-xl p-3.5 text-center">
+                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Diverted</p>
+                <p className="font-extrabold text-2xl text-emerald-600 mt-0.5">{impact.kgDiverted} <span className="text-xs font-bold">kg</span></p>
+              </div>
+              <div className="bg-white text-gray-900 rounded-xl p-3.5 text-center">
+                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">CO₂ Saved</p>
+                <p className="font-extrabold text-2xl text-amber-600 mt-0.5">{impact.co2eAvoided} <span className="text-xs font-bold">kg</span></p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Clearing Out Lead Action Banner */}
+        <div
+          onClick={() => navigate('/clearing-out')}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl p-6 transition-all duration-200 hover:scale-[1.01] cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <div className="flex items-start sm:items-center gap-4">
+            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+              <Sparkles className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <div className="inline-block text-[11px] font-extrabold bg-white text-emerald-700 px-2 py-0.5 rounded-md uppercase tracking-wider mb-1">
+                AI Vision Intake
+              </div>
+              <h2 className="font-extrabold text-2xl leading-snug">
+                Clearing Out Surplus Goods?
+              </h2>
+              <p className="text-emerald-100 text-sm mt-0.5 font-medium max-w-xl">
+                Take one photo of your desk, shelf, or closet. Our AI automatically identifies items and drafts listings.
+              </p>
+            </div>
+          </div>
+          <button className="px-5 py-3 bg-white text-emerald-700 hover:bg-emerald-50 font-bold text-sm rounded-lg transition-transform hover:scale-105 flex items-center gap-2 shrink-0">
+            <span>Scan Photo</span>
+            <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
           </button>
         </div>
 
-        {/* Quick Impact Strip */}
-        {impact && (
-          <div className="flex gap-3 mt-5 overflow-x-auto scrollbar-hide -mx-1 px-1">
-            {[
-              { icon: '♻️', value: impact.itemsReused, label: 'Reused' },
-              { icon: '⚖️', value: `${impact.kgDiverted}kg`, label: 'Diverted' },
-              { icon: '🌿', value: `${impact.co2eAvoided}kg`, label: 'CO₂ saved' },
-            ].map((stat, i) => (
-              <div key={i} className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5 flex items-center gap-2.5 shrink-0">
-                <span className="text-lg">{stat.icon}</span>
-                <div>
-                  <p className="text-white font-bold text-sm leading-none">{stat.value}</p>
-                  <p className="text-green-200 text-[10px] mt-0.5">{stat.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="px-5 space-y-6 -mt-3">
-        {/* Clearing Out CTA */}
-        <button
-          onClick={() => navigate('/clearing-out')}
-          className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-2xl p-5 shadow-xl shadow-green-600/20 flex items-center gap-4 hover:shadow-2xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 animate-fade-in"
-        >
-          <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
-            <Sparkles className="w-7 h-7" />
-          </div>
-          <div className="text-left flex-1">
-            <h3 className="font-bold text-lg">Clearing Out?</h3>
-            <p className="text-green-100 text-sm mt-0.5">Upload a photo — AI creates listings for you</p>
-          </div>
-          <ChevronRight className="w-6 h-6 text-green-200 shrink-0" />
-        </button>
-
-        {/* Wishlist Matches */}
-        {wishMatches.length > 0 && (
-          <section className="animate-fade-in" style={{ animationDelay: '100ms' }}>
-            <div className="flex items-center justify-between mb-3">
+        {/* 2-Column Section: Wishlist Matches & Bulletins */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Wishlist Matches */}
+          <section className="bg-gray-100 rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Heart className="w-4 h-4 text-rose-500" />
-                <h2 className="font-bold text-slate-800">Wishlist Matches</h2>
+                <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center">
+                  <Heart className="w-4 h-4" strokeWidth={2.5} />
+                </div>
+                <h3 className="font-bold text-base text-gray-900">Wishlist Matches</h3>
               </div>
-              <Link to="/wishlist" className="text-green-600 text-sm font-semibold flex items-center gap-0.5">
-                View all <ChevronRight className="w-4 h-4" />
+              <Link to="/wishlist" className="text-xs font-bold text-blue-600 hover:text-blue-800 transition">
+                View all &rarr;
               </Link>
             </div>
-            <div className="space-y-2.5">
-              {wishMatches.map(match => (
-                <div key={match.wish.id} className="bg-rose-50 border border-rose-100 rounded-xl p-3.5">
-                  <p className="text-xs font-medium text-rose-600 mb-1.5">
-                    🎯 "{match.wish.keyword}" — {match.items.length} match{match.items.length !== 1 ? 'es' : ''}
-                  </p>
-                  <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-                    {match.items.slice(0, 3).map(item => (
-                      <button
-                        key={item.id}
-                        onClick={() => navigate(`/item/${item.id}`)}
-                        className="shrink-0 bg-white rounded-lg px-3 py-2 text-xs font-medium text-slate-700 border border-rose-100 hover:border-rose-300 transition"
-                      >
-                        {item.title}
-                      </button>
-                    ))}
+
+            {wishMatches.length > 0 ? (
+              <div className="space-y-3">
+                {wishMatches.map(match => (
+                  <div key={match.wish.id} className="bg-white rounded-xl p-3.5">
+                    <div className="flex items-center justify-between text-xs font-bold text-gray-800 mb-2">
+                      <span>Wanted: "{match.wish.keyword}"</span>
+                      <span className="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md text-[10px]">
+                        {match.items.length} match{match.items.length !== 1 ? 'es' : ''}
+                      </span>
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                      {match.items.slice(0, 3).map(item => (
+                        <button
+                          key={item.id}
+                          onClick={() => navigate(`/item/${item.id}`)}
+                          className="shrink-0 bg-gray-100 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition"
+                        >
+                          {item.title}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Recent Notifications */}
-        {notifications.length > 0 && (
-          <section className="animate-fade-in" style={{ animationDelay: '150ms' }}>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Bell className="w-4 h-4 text-sky-500" />
-                <h2 className="font-bold text-slate-800">Recent Alerts</h2>
+                ))}
               </div>
-              <Link to="/notifications" className="text-green-600 text-sm font-semibold flex items-center gap-0.5">
-                All <ChevronRight className="w-4 h-4" />
+            ) : (
+              <div className="text-center py-6 text-xs text-gray-500 font-medium bg-white rounded-xl">
+                No active item matches today
+              </div>
+            )}
+          </section>
+
+          {/* Recent Bulletins */}
+          <section className="bg-gray-100 rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                  <Bell className="w-4 h-4" strokeWidth={2.5} />
+                </div>
+                <h3 className="font-bold text-base text-gray-900">Recent Alerts</h3>
+              </div>
+              <Link to="/notifications" className="text-xs font-bold text-blue-600 hover:text-blue-800 transition">
+                All alerts &rarr;
               </Link>
             </div>
-            <div className="space-y-2">
-              {notifications.map(n => (
-                <button
-                  key={n.id}
-                  onClick={() => n.itemId ? navigate(`/item/${n.itemId}`) : navigate('/notifications')}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all duration-200 ${n.read ? 'bg-white border-slate-100' : 'bg-sky-50 border-sky-100'}`}
-                >
-                  <p className={`text-sm font-semibold ${n.read ? 'text-slate-700' : 'text-sky-800'}`}>{n.title}</p>
-                  <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{n.message}</p>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
 
-        {/* Quick Links */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 animate-fade-in" style={{ animationDelay: '200ms' }}>
+            {notifications.length > 0 ? (
+              <div className="space-y-2.5">
+                {notifications.map(n => (
+                  <button
+                    key={n.id}
+                    onClick={() => n.itemId ? navigate(`/item/${n.itemId}`) : navigate('/notifications')}
+                    className="w-full text-left p-3 rounded-xl bg-white hover:bg-blue-50/50 transition cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-gray-900">{n.title}</span>
+                      {!n.read && <span className="w-2 h-2 rounded-full bg-blue-500"></span>}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{n.message}</p>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-xs text-gray-500 font-medium bg-white rounded-xl">
+                No new notifications
+              </div>
+            )}
+          </section>
+        </div>
+
+        {/* 4 Flat Feature Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <button
             onClick={() => navigate('/scrap-day')}
-            className="bg-white border border-slate-100 rounded-2xl p-4 text-left hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]"
+            className="p-5 bg-gray-100 hover:bg-amber-50 text-left rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer"
           >
-            <CalendarDays className="w-6 h-6 text-amber-500 mb-2" />
-            <p className="font-semibold text-sm text-slate-800">Scrap Day</p>
-            <p className="text-xs text-slate-400 mt-0.5">Collection drives</p>
+            <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center mb-3">
+              <CalendarDays className="w-5 h-5" strokeWidth={2.5} />
+            </div>
+            <p className="font-bold text-sm text-gray-900">Scrap Day</p>
+            <p className="text-xs text-gray-500 mt-0.5 font-medium">Bulk Drives</p>
           </button>
+
           <button
             onClick={() => navigate('/impact')}
-            className="bg-white border border-slate-100 rounded-2xl p-4 text-left hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]"
+            className="p-5 bg-gray-100 hover:bg-emerald-50 text-left rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer"
           >
-            <TrendingUp className="w-6 h-6 text-green-500 mb-2" />
-            <p className="font-semibold text-sm text-slate-800">Impact</p>
-            <p className="text-xs text-slate-400 mt-0.5">Your footprint</p>
+            <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
+              <TrendingUp className="w-5 h-5" strokeWidth={2.5} />
+            </div>
+            <p className="font-bold text-sm text-gray-900">Eco Impact</p>
+            <p className="text-xs text-gray-500 mt-0.5 font-medium">Metrics</p>
           </button>
+
           <button
             onClick={() => navigate('/wishlist')}
-            className="bg-white border border-slate-100 rounded-2xl p-4 text-left hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]"
+            className="p-5 bg-gray-100 hover:bg-rose-50 text-left rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer"
           >
-            <Heart className="w-6 h-6 text-rose-500 mb-2" />
-            <p className="font-semibold text-sm text-slate-800">Wishlist</p>
-            <p className="text-xs text-slate-400 mt-0.5">Auto-matching</p>
+            <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center mb-3">
+              <Heart className="w-5 h-5" strokeWidth={2.5} />
+            </div>
+            <p className="font-bold text-sm text-gray-900">Wishlist</p>
+            <p className="text-xs text-gray-500 mt-0.5 font-medium">Auto Radar</p>
           </button>
+
           <button
             onClick={() => navigate('/marketplace')}
-            className="bg-white border border-slate-100 rounded-2xl p-4 text-left hover:shadow-md hover:border-slate-200 transition-all duration-200 active:scale-[0.98]"
+            className="p-5 bg-gray-100 hover:bg-blue-50 text-left rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer"
           >
-            <Package className="w-6 h-6 text-emerald-600 mb-2" />
-            <p className="font-semibold text-sm text-slate-800">Marketplace</p>
-            <p className="text-xs text-slate-400 mt-0.5">Browse all items</p>
+            <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-3">
+              <Package className="w-5 h-5" strokeWidth={2.5} />
+            </div>
+            <p className="font-bold text-sm text-gray-900">Marketplace</p>
+            <p className="text-xs text-gray-500 mt-0.5 font-medium">Browse All</p>
           </button>
         </div>
 
-        {/* Available Items */}
-        <section className="animate-fade-in" style={{ animationDelay: '250ms' }}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Package className="w-4 h-4 text-green-600" />
-              <h2 className="font-bold text-slate-800">Available Items</h2>
+        {/* Available Items Section */}
+        <section className="pt-2">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="font-extrabold text-2xl text-gray-900 tracking-tight">
+                Available In Your Community
+              </h2>
+              <p className="text-xs text-gray-500 font-medium">Recently listed goods ready for claiming</p>
             </div>
-            <Link to="/marketplace" className="text-green-600 text-sm font-semibold flex items-center gap-0.5">
-              See all <ChevronRight className="w-4 h-4" />
+            <Link
+              to="/marketplace"
+              className="px-3.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs font-bold text-gray-800 transition"
+            >
+              See All &rarr;
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-4.5 stagger-children">
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
             {items.map(item => (
               <ItemCard key={item.id} item={item} />
             ))}

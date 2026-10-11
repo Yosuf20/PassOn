@@ -2,23 +2,23 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api, { ITEM_ICONS } from '../services/api';
-import { ArrowLeft, Check, Trash2, ChevronDown, ChevronUp, Package, Sparkles, AlertCircle, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Check, Trash2, ChevronDown, ChevronUp, Package, Sparkles, Image as ImageIcon } from 'lucide-react';
 
 const categories = ['electronics', 'books', 'home', 'appliances', 'fitness', 'furniture', 'clothing', 'paper'];
 
 const priceTypes = [
-  { value: 'free', label: 'Free', color: 'bg-green-100 text-green-700 border-green-200' },
-  { value: 'price', label: 'Set Price', color: 'bg-sky-100 text-sky-700 border-sky-200' },
-  { value: 'scrap', label: 'Scrap / E-Waste', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+  { value: 'free', label: 'Free Giveaway' },
+  { value: 'price', label: 'Set Price' },
+  { value: 'scrap', label: 'Scrap Recycle' },
 ];
 
 const routes = [
-  { value: 'reuse', label: '♻️ Reuse (Giveaway / Resale)', badge: 'bg-green-600 text-white' },
-  { value: 'scrap', label: '📦 Scrap (Recycler drive)', badge: 'bg-amber-500 text-white' },
-  { value: 'ewaste', label: '⚡ E-Waste (Safe disposal)', badge: 'bg-rose-500 text-white' },
+  { value: 'reuse', label: 'Reuse (Giveaway / Sale)' },
+  { value: 'scrap', label: 'Scrap (Collector Drive)' },
+  { value: 'ewaste', label: 'E-Waste (Safe Disposal)' },
 ];
 
-const routeLabels = { reuse: '♻️ Reuse', scrap: '📦 Scrap', ewaste: '⚡ E-Waste' };
+const routeLabels = { reuse: 'Reuse', scrap: 'Scrap', ewaste: 'E-Waste' };
 const conditionOptions = ['like_new', 'good', 'fair', 'broken'];
 
 export default function AIResultsPage() {
@@ -94,18 +94,20 @@ export default function AIResultsPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-dvh flex flex-col items-center justify-center px-6 pb-safe text-center">
-        <Package className="w-16 h-16 text-slate-300 mb-4" />
-        <h2 className="text-lg font-bold text-slate-700">No items identified</h2>
-        <p className="text-slate-500 text-sm mt-1 mb-6 max-w-sm">
-          The photo did not produce recognizable physical items. Try taking a well-lit photo of your items.
-        </p>
-        <button
-          onClick={() => navigate('/clearing-out')}
-          className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow-md transition"
-        >
-          Try Again
-        </button>
+      <div className="min-h-dvh flex flex-col items-center justify-center px-6 pb-safe text-center bg-white">
+        <div className="bg-gray-100 p-8 rounded-2xl max-w-sm">
+          <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+          <h2 className="font-extrabold text-xl text-gray-900">No Items Detected</h2>
+          <p className="text-sm text-gray-500 mt-1 mb-5 font-medium">
+            The photo did not produce recognizable physical items. Try submitting a well-lit photo.
+          </p>
+          <button
+            onClick={() => navigate('/clearing-out')}
+            className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs rounded-lg transition"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
@@ -113,91 +115,95 @@ export default function AIResultsPage() {
   const includedCount = items.filter(i => i.included).length;
 
   return (
-    <div className="min-h-dvh bg-slate-50 flex flex-col pb-safe">
+    <div className="min-h-dvh bg-white text-gray-900 flex flex-col pb-safe">
       {/* Top Header */}
-      <div className="bg-white border-b border-slate-100 px-5 pt-10 pb-4 sticky top-0 z-30">
-        <div className="flex items-center gap-3 max-w-6xl mx-auto">
-          <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-slate-500 hover:text-slate-800 rounded-xl transition">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div className="flex-1">
-            <h1 className="font-bold text-lg text-slate-800">Review & Confirm Listings</h1>
-            <p className="text-xs text-slate-500">
-              {items.length} item{items.length !== 1 ? 's' : ''} identified — edit or deselect any item before publishing
-            </p>
+      <div className="bg-white border-b-2 border-gray-100 px-5 sm:px-8 pt-6 pb-4 sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition"
+              title="Return"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <div>
+              <h1 className="font-extrabold text-2xl text-gray-900 tracking-tight">Review AI Listings</h1>
+              <p className="text-xs text-gray-500 font-medium">
+                {items.length} items detected • Review and edit details before publishing
+              </p>
+            </div>
           </div>
-          <div className="hidden sm:block">
-            <span className="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full">
-              {includedCount} of {items.length} selected
-            </span>
+          <div className="text-xs font-bold bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hidden sm:block">
+            {includedCount} of {items.length} selected
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto w-full px-5 py-4 flex-1">
+      <div className="max-w-7xl mx-auto w-full px-5 sm:px-8 py-6 flex-1 space-y-6">
         {/* Provider Banner */}
-        <div className={`mb-4 p-4 rounded-2xl border flex items-start gap-3 transition-all ${
+        <div className={`p-4 rounded-xl flex items-start gap-3.5 ${
           !isMock && provider === 'groq'
-            ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-            : 'bg-amber-50 border-amber-200 text-amber-900'
+            ? 'bg-emerald-50 text-emerald-900'
+            : 'bg-amber-50 text-amber-900'
         }`}>
           <div className="text-2xl shrink-0 mt-0.5">
             {!isMock && provider === 'groq' ? '⚡' : '🧪'}
           </div>
-          <div className="flex-1 text-xs">
+          <div className="text-xs">
             <p className="font-bold text-sm">
               {!isMock && provider === 'groq'
-                ? 'Groq Vision AI Active (Qwen 3.8 Vision)'
+                ? 'Groq Vision Model Active (Qwen 3.8 Vision)'
                 : 'Demo / Mock Analysis Mode'}
             </p>
-            <p className="opacity-90 mt-0.5 leading-relaxed">
+            <p className="opacity-90 mt-0.5 font-medium leading-relaxed">
               {!isMock && provider === 'groq'
-                ? 'Identified items, condition assessments, and routes from your uploaded photo. You can edit every detail.'
-                : 'Showing simulated items. Configure GROQ_API_KEY in backend/.env to run live multimodal vision analysis.'}
+                ? 'Items, conditions, and disposal routes identified directly from photo. You can edit every field below.'
+                : 'Sample items generated. Add GROQ_API_KEY in backend/.env to run live multimodal vision analysis.'}
             </p>
           </div>
         </div>
 
-        {/* Responsive Layout: Photo preview on left on desktop, editor on right */}
+        {/* 2-Column Responsive Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+          {/* Photo Preview Column */}
           {photoPreview && (
-            <div className="md:col-span-4 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs md:sticky md:top-28">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-2">
-                <ImageIcon className="w-3.5 h-3.5 text-green-600" />
-                <span>Uploaded Photo</span>
+            <div className="md:col-span-4 bg-gray-100 p-4 rounded-2xl md:sticky md:top-28">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-gray-700 mb-2.5">
+                <ImageIcon className="w-4 h-4 text-blue-500" />
+                <span>Uploaded Source Photo</span>
               </div>
               <img
                 src={photoPreview}
                 alt="Source items"
-                className="w-full aspect-[4/3] object-cover rounded-xl border border-slate-100"
+                className="w-full aspect-[4/3] object-cover rounded-xl"
               />
-              <p className="text-[11px] text-slate-400 mt-2 text-center">
-                Review items detected from this image
+              <p className="text-xs text-gray-500 mt-2 text-center font-medium">
+                Detected items from this image
               </p>
             </div>
           )}
 
-          {/* Items List & Editor */}
-          <div className={`${photoPreview ? 'md:col-span-8' : 'md:col-span-12'} space-y-3.5`}>
-            {items.map((item, index) => {
+          {/* Items Editor Column */}
+          <div className={`${photoPreview ? 'md:col-span-8' : 'md:col-span-12'} space-y-4`}>
+            {items.map((item) => {
               const icon = ITEM_ICONS[item.category] || ITEM_ICONS.default;
               return (
                 <div
                   key={item.id}
-                  className={`bg-white rounded-2xl border overflow-hidden transition-all duration-200 ${
+                  className={`rounded-2xl transition-all ${
                     item.included
-                      ? 'border-green-300 shadow-sm'
-                      : 'border-slate-200 opacity-60 bg-slate-50/50'
+                      ? 'bg-gray-100 p-1'
+                      : 'bg-gray-100/60 opacity-60 p-1'
                   }`}
                 >
-                  {/* Collapsed Header */}
-                  <div className="flex items-center gap-3 p-4">
-                    {/* Checkbox */}
+                  {/* Collapsed Header Bar */}
+                  <div className="flex items-center gap-3 p-3.5 rounded-xl bg-white">
                     <input
                       type="checkbox"
                       checked={item.included}
                       onChange={e => updateItem(item.id, 'included', e.target.checked)}
-                      className="w-5 h-5 rounded-md text-green-600 focus:ring-green-500 cursor-pointer accent-green-600"
+                      className="w-5 h-5 rounded-md text-blue-500 focus:ring-blue-500 cursor-pointer accent-blue-500"
                       title="Include in listing"
                     />
 
@@ -206,56 +212,57 @@ export default function AIResultsPage() {
                     </span>
 
                     <div className="flex-1 min-w-0 cursor-pointer" onClick={() => toggleExpand(item.id)}>
-                      <p className="font-semibold text-sm text-slate-800 truncate">{item.title}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px] font-medium text-slate-400 capitalize">{item.category}</span>
-                        <span className="text-[10px]">{routeLabels[item.route] || item.route}</span>
+                      <p className="font-bold text-sm text-gray-900 truncate">{item.title}</p>
+                      <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500 font-medium">
+                        <span className="capitalize">{item.category}</span>
+                        <span>•</span>
+                        <span>{routeLabels[item.route] || item.route}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-xs font-bold">
                       {item.priceType === 'free' && (
-                        <span className="text-green-600 font-bold text-sm">Free</span>
+                        <span className="text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">Free</span>
                       )}
                       {item.priceType === 'price' && (
-                        <span className="text-slate-800 font-bold text-sm">₹{item.askingPrice}</span>
+                        <span className="text-gray-900 font-extrabold text-sm">₹{item.askingPrice}</span>
                       )}
                       {item.priceType === 'scrap' && (
-                        <span className="text-amber-600 font-semibold text-xs">Scrap</span>
+                        <span className="text-amber-600 bg-amber-50 px-2 py-1 rounded-md">Scrap</span>
                       )}
                       <button
                         onClick={() => toggleExpand(item.id)}
-                        className="p-1 text-slate-400 hover:text-slate-600 rounded-lg"
-                        title={item.expanded ? 'Collapse' : 'Expand editor'}
+                        className="p-1 text-gray-400 hover:text-gray-700 rounded-md"
+                        title={item.expanded ? 'Collapse' : 'Expand'}
                       >
                         {item.expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
 
-                  {/* Expanded Item Editor */}
+                  {/* Expanded Item Form */}
                   {item.expanded && (
-                    <div className="border-t border-slate-100 px-4 pb-4 pt-3 space-y-3.5 bg-slate-50/30">
-                      {/* Name */}
+                    <div className="p-4 space-y-4 pt-4">
+                      {/* Title */}
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">
+                        <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
                           Item Title
                         </label>
                         <input
                           type="text"
                           value={item.title}
                           onChange={e => updateItem(item.id, 'title', e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-green-500"
+                          className="w-full px-3.5 py-2.5 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-sm text-gray-900 font-medium outline-none"
                         />
                       </div>
 
                       {/* Route Selection */}
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">
+                        <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
                           Recycling / Disposal Route
                         </label>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                          {routes.map(r => (
+                          {routes.map((r) => (
                             <button
                               key={r.value}
                               type="button"
@@ -265,10 +272,10 @@ export default function AIResultsPage() {
                                   updateItem(item.id, 'priceType', 'scrap');
                                 }
                               }}
-                              className={`py-2 px-2.5 rounded-lg text-xs font-semibold border transition text-left ${
+                              className={`py-2 px-3 text-xs font-bold rounded-lg transition-all text-center ${
                                 item.route === r.value
-                                  ? 'bg-green-600 text-white border-green-600 shadow-xs'
-                                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                                  ? 'bg-blue-500 text-white'
+                                  : 'bg-white text-gray-700 hover:bg-gray-200'
                               }`}
                             >
                               {r.label}
@@ -277,17 +284,16 @@ export default function AIResultsPage() {
                         </div>
                       </div>
 
-                      {/* Category & Condition Row */}
+                      {/* Category & Condition */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {/* Category */}
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">
+                          <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
                             Category
                           </label>
                           <select
                             value={item.category}
                             onChange={e => updateItem(item.id, 'category', e.target.value)}
-                            className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 capitalize focus:outline-none focus:ring-2 focus:ring-green-500"
+                            className="w-full px-3.5 py-2.5 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-sm text-gray-900 font-medium capitalize outline-none"
                           >
                             {categories.map(c => (
                               <option key={c} value={c} className="capitalize">
@@ -297,9 +303,8 @@ export default function AIResultsPage() {
                           </select>
                         </div>
 
-                        {/* Condition */}
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">
+                          <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
                             Condition
                           </label>
                           <div className="flex gap-1.5 flex-wrap">
@@ -308,10 +313,10 @@ export default function AIResultsPage() {
                                 key={c}
                                 type="button"
                                 onClick={() => updateItem(item.id, 'condition', c)}
-                                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border transition capitalize ${
+                                className={`px-2.5 py-1.5 text-xs font-bold capitalize rounded-lg transition ${
                                   item.condition === c
-                                    ? 'bg-emerald-600 text-white border-emerald-600'
-                                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                                    ? 'bg-emerald-500 text-white'
+                                    : 'bg-white text-gray-700 hover:bg-gray-200'
                                 }`}
                               >
                                 {c.replace('_', ' ')}
@@ -323,33 +328,33 @@ export default function AIResultsPage() {
 
                       {/* Description */}
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">
+                        <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
                           Description
                         </label>
                         <textarea
                           value={item.description}
                           onChange={e => updateItem(item.id, 'description', e.target.value)}
                           rows={2}
-                          className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
+                          className="w-full px-3.5 py-2.5 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-sm text-gray-900 font-medium outline-none resize-none"
                           placeholder="Factual notes on visible condition..."
                         />
                       </div>
 
-                      {/* Price / Listing Type */}
+                      {/* Pricing Type */}
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">
+                        <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
                           Listing Type
                         </label>
-                        <div className="flex gap-2">
-                          {priceTypes.map(pt => (
+                        <div className="grid grid-cols-3 gap-2">
+                          {priceTypes.map((pt) => (
                             <button
                               key={pt.value}
                               type="button"
                               onClick={() => updateItem(item.id, 'priceType', pt.value)}
-                              className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition ${
+                              className={`py-2 px-2 text-xs font-bold rounded-lg transition text-center ${
                                 item.priceType === pt.value
-                                  ? `${pt.color} border-current shadow-xs`
-                                  : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                                  ? 'bg-blue-500 text-white'
+                                  : 'bg-white text-gray-700 hover:bg-gray-200'
                               }`}
                             >
                               {pt.label}
@@ -361,10 +366,10 @@ export default function AIResultsPage() {
                       {/* Price input */}
                       {item.priceType === 'price' && (
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">
+                          <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
                             Asking Price (₹)
                             {item.suggestedPrice?.max > 0 && (
-                              <span className="text-slate-400 font-normal ml-1">
+                              <span className="text-gray-500 font-normal ml-1">
                                 — Suggested: ₹{item.suggestedPrice?.min}–₹{item.suggestedPrice?.max}
                               </span>
                             )}
@@ -373,20 +378,20 @@ export default function AIResultsPage() {
                             type="number"
                             value={item.askingPrice}
                             onChange={e => updateItem(item.id, 'askingPrice', parseInt(e.target.value) || 0)}
-                            className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            className="w-full px-3.5 py-2.5 bg-white border-2 border-transparent focus:border-blue-500 rounded-lg text-sm text-gray-900 font-medium outline-none"
                             min={0}
                           />
                         </div>
                       )}
 
                       {/* Remove Button */}
-                      <div className="flex justify-between items-center pt-2">
+                      <div className="pt-2 flex justify-end">
                         <button
                           type="button"
                           onClick={() => removeItem(item.id)}
-                          className="flex items-center gap-1.5 text-xs text-rose-500 font-medium hover:text-rose-700 transition"
+                          className="flex items-center gap-1.5 text-xs text-rose-600 font-bold hover:text-rose-800 transition"
                         >
-                          <Trash2 className="w-3.5 h-3.5" /> Remove from batch
+                          <Trash2 className="w-4 h-4" /> Remove from batch
                         </button>
                       </div>
                     </div>
@@ -398,24 +403,24 @@ export default function AIResultsPage() {
         </div>
       </div>
 
-      {/* Sticky Publish Bar */}
-      <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-5 py-4 shadow-lg z-30">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div className="hidden sm:block text-xs text-slate-500">
-            Publishing <span className="font-bold text-slate-800">{includedCount}</span> items to{' '}
-            <span className="font-bold text-slate-800">{community?.name}</span>
+      {/* Sticky Bottom Publishing Bar */}
+      <div className="sticky bottom-0 bg-white border-t-2 border-gray-100 px-5 sm:px-8 py-4 z-30">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="text-xs text-gray-600 font-medium hidden sm:block">
+            Publishing <strong className="text-gray-900">{includedCount} items</strong> to living circle{' '}
+            <strong className="text-gray-900">{community?.name}</strong>
           </div>
           <button
             onClick={handlePublish}
             disabled={publishing || includedCount === 0}
-            className="w-full sm:w-auto sm:min-w-[240px] py-3.5 px-6 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold text-base rounded-xl shadow-lg shadow-green-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-8 py-3.5 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold text-sm rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer hover:scale-105 disabled:opacity-50"
           >
             {publishing ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Publishing...</span>
             ) : (
               <>
                 <Check className="w-5 h-5" />
-                Publish {includedCount} Item{includedCount !== 1 ? 's' : ''}
+                <span>Publish {includedCount} Item{includedCount !== 1 ? 's' : ''}</span>
               </>
             )}
           </button>

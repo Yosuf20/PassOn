@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
-import { Camera, Upload, Sparkles, ArrowLeft, Image, X } from 'lucide-react';
+import { Camera, Sparkles, ArrowLeft, Image, X } from 'lucide-react';
 
 export default function ClearingOutPage() {
   const [file, setFile] = useState(null);
@@ -28,7 +28,6 @@ export default function ClearingOutPage() {
     setAnalyzing(true);
     setProgress(0);
 
-    // Simulate progressive analysis
     const progressTimer = setInterval(() => {
       setProgress(prev => {
         if (prev >= 90) { clearInterval(progressTimer); return 90; }
@@ -57,65 +56,78 @@ export default function ClearingOutPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-slate-50 flex flex-col pb-safe">
+    <div className="min-h-dvh bg-white text-gray-900 pb-safe">
       {/* Header */}
-      <div className="bg-gradient-to-br from-green-800 to-emerald-600 px-5 pt-12 pb-8 rounded-b-[2rem] relative overflow-hidden">
-        <div className="max-w-2xl mx-auto relative z-10">
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full" />
-          <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-white/80 hover:text-white mb-2">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-6 h-6" /> Clearing Out
-          </h1>
-          <p className="text-green-100 text-sm mt-1">Upload a photo of your items — AI does the rest</p>
+      <div className="border-b-2 border-gray-100 px-5 sm:px-8 pt-8 pb-6 bg-white">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-center gap-3 mb-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition"
+              title="Return"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="font-extrabold text-3xl sm:text-4xl text-gray-900 tracking-tight flex items-center gap-2">
+              <Sparkles className="w-8 h-8 text-blue-500" />
+              <span>Clearing Out</span>
+            </h1>
+          </div>
+          <p className="text-gray-500 text-sm font-medium max-w-xl">
+            Upload a photo of your items — AI identifies objects and recommends reuse vs scrap routes.
+          </p>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto w-full flex-1 px-5 pt-6 space-y-6">
-        {/* Upload Area */}
+      <div className="max-w-3xl mx-auto w-full px-5 sm:px-8 py-8 space-y-6">
+        {/* Upload Zone */}
         {!preview ? (
           <div
             onClick={() => fileRef.current?.click()}
-            className="border-2 border-dashed border-slate-300 rounded-2xl p-8 flex flex-col items-center gap-4 bg-white cursor-pointer hover:border-green-400 hover:bg-green-50/50 transition-all duration-300 active:scale-[0.98] animate-fade-in"
+            className="bg-gray-100 hover:bg-blue-50/60 rounded-2xl p-12 sm:p-16 text-center cursor-pointer transition-all duration-200 hover:scale-[1.01] flex flex-col items-center justify-center gap-4"
           >
-            <div className="w-20 h-20 bg-green-50 rounded-2xl flex items-center justify-center">
-              <Camera className="w-10 h-10 text-green-500" />
+            <div className="w-18 h-18 bg-blue-500 text-white rounded-2xl flex items-center justify-center hover:scale-105 transition-transform">
+              <Camera className="w-9 h-9" strokeWidth={2.5} />
             </div>
-            <div className="text-center">
-              <p className="font-semibold text-slate-700 text-base">Tap to upload a photo</p>
-              <p className="text-sm text-slate-400 mt-1">Take a photo of your shelf, desk, or pile of items</p>
+            <div>
+              <p className="font-extrabold text-xl text-gray-900">Upload or Snap Photo</p>
+              <p className="text-sm text-gray-500 mt-1 font-medium">
+                Photograph your desk, bookshelf, pile, or storage container
+              </p>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <Image className="w-4 h-4" />
-              JPG, PNG, WebP — max 10MB
+            <div className="text-xs font-bold text-gray-400 bg-white px-3 py-1.5 rounded-lg">
+              JPG, PNG, WEBP • Max 10MB
             </div>
           </div>
         ) : (
-          <div className="relative rounded-2xl overflow-hidden animate-scale-in shadow-lg">
+          <div className="relative rounded-2xl overflow-hidden bg-gray-900">
             <img src={preview} alt="Upload preview" className="w-full aspect-[4/3] object-cover" />
+
             {!analyzing && (
               <button
                 onClick={clearFile}
-                className="absolute top-3 right-3 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition"
+                className="absolute top-4 right-4 p-2 bg-gray-900/80 hover:bg-gray-900 text-white rounded-lg transition"
+                title="Discard photo"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             )}
+
             {analyzing && (
-              <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
-                <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-                <div className="text-center">
-                  <p className="text-white font-bold text-lg">AI Analyzing...</p>
-                  <p className="text-white/70 text-sm mt-1">Identifying items in your photo</p>
+              <div className="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center p-6 gap-4 text-center">
+                <div className="w-12 h-12 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin" />
+                <div className="text-white">
+                  <p className="font-extrabold text-lg">AI Vision Parsing...</p>
+                  <p className="text-sm text-gray-300 mt-0.5">Detecting individual objects and condition</p>
                 </div>
                 {/* Progress bar */}
-                <div className="w-48 h-2 bg-white/20 rounded-full overflow-hidden">
+                <div className="w-56 h-3 bg-white/20 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-green-400 rounded-full transition-all duration-300"
+                    className="h-full bg-blue-500 rounded-full transition-all duration-300"
                     style={{ width: `${Math.min(progress, 100)}%` }}
                   />
                 </div>
+                <span className="text-xs font-bold text-white">{Math.round(progress)}% Complete</span>
               </div>
             )}
           </div>
@@ -130,31 +142,35 @@ export default function ClearingOutPage() {
           className="hidden"
         />
 
-        {/* Instructions */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-5 space-y-3 animate-fade-in" style={{ animationDelay: '100ms' }}>
-          <h3 className="font-bold text-slate-700 text-sm">How it works</h3>
-          <div className="space-y-2.5">
-            {[
-              { step: '1', text: 'Upload a photo of items you want to clear out' },
-              { step: '2', text: 'AI identifies each item and suggests listings' },
-              { step: '3', text: 'Review, edit, and publish to your community' },
-            ].map(s => (
-              <div key={s.step} className="flex items-start gap-3">
-                <span className="w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-xs font-bold shrink-0">{s.step}</span>
-                <p className="text-sm text-slate-600">{s.text}</p>
-              </div>
-            ))}
+        {/* How it works */}
+        <div className="bg-gray-100 rounded-2xl p-6 space-y-3.5">
+          <h3 className="font-extrabold text-sm uppercase tracking-wider text-gray-900">
+            How It Works
+          </h3>
+          <div className="space-y-3 text-sm text-gray-700 font-medium">
+            <div className="flex items-start gap-3">
+              <span className="w-6 h-6 bg-blue-500 text-white rounded-md flex items-center justify-center text-xs font-bold shrink-0">1</span>
+              <p><strong>Snap:</strong> Take one photo containing all items you want to give away or recycle.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="w-6 h-6 bg-blue-500 text-white rounded-md flex items-center justify-center text-xs font-bold shrink-0">2</span>
+              <p><strong>AI Detection:</strong> Vision model segments individual goods and suggests routes.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="w-6 h-6 bg-blue-500 text-white rounded-md flex items-center justify-center text-xs font-bold shrink-0">3</span>
+              <p><strong>Publish:</strong> Review prices, adjust titles, and list directly in your community circle.</p>
+            </div>
           </div>
         </div>
 
-        {/* Analyze Button */}
+        {/* Action Button */}
         {preview && !analyzing && (
           <button
             onClick={handleAnalyze}
-            className="w-full py-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold text-base rounded-xl shadow-lg shadow-green-600/30 transition-all duration-200 flex items-center justify-center gap-2 animate-slide-up"
+            className="w-full py-4 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold text-base rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
           >
             <Sparkles className="w-5 h-5" />
-            Analyze with AI
+            <span>Analyze with AI</span>
           </button>
         )}
       </div>

@@ -179,19 +179,19 @@ def analyze_image_groq(image_base64, mime_type="image/jpeg"):
 
 MOCK_RESPONSE = [
     {
-        "name": "Desk Lamp (LED)",
-        "category": "electronics",
+        "name": "Milton Stainless Steel Water Bottle (750ml)",
+        "category": "home",
         "condition": "good",
-        "description": "Adjustable LED desk lamp with metal arm. Appears functional with minor wear.",
-        "suggestedPrice": {"min": 150, "max": 300},
+        "description": "Stainless steel Milton insulated water bottle with flip-top lid. Clean and functional.",
+        "suggestedPrice": {"min": 150, "max": 250},
         "route": "reuse",
     },
     {
-        "name": "Textbook — Data Structures & Algorithms",
-        "category": "books",
-        "condition": "fair",
-        "description": "Programming textbook with some wear on cover. Pages appear intact.",
-        "suggestedPrice": {"min": 50, "max": 120},
+        "name": "Study Table Lamp",
+        "category": "electronics",
+        "condition": "good",
+        "description": "Adjustable LED desk lamp with flexible arm. Appears functional with minor wear.",
+        "suggestedPrice": {"min": 150, "max": 300},
         "route": "reuse",
     },
     {
@@ -203,6 +203,7 @@ MOCK_RESPONSE = [
         "route": "ewaste",
     },
 ]
+
 
 
 import copy

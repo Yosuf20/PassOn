@@ -41,6 +41,7 @@ def api_analyze():
     if request.method == "OPTIONS":
         return "", 204
 
+    load_dotenv(env_path, override=True)
     event = {"body": request.get_data(as_text=True)}
     result = analyze_photo(event, None)
     
@@ -52,6 +53,7 @@ def api_analyze():
 @app.route("/api/health", methods=["GET"])
 def health():
     """Health check — also reports whether Groq is configured."""
+    load_dotenv(env_path, override=True)
     has_key = bool(os.environ.get("GROQ_API_KEY", "").strip())
     return jsonify({
         "status": "ok",
@@ -60,14 +62,16 @@ def health():
     })
 
 
+
 if __name__ == "__main__":
     port = int(os.environ.get("BACKEND_PORT", 3001))
     has_key = bool(os.environ.get("GROQ_API_KEY", "").strip())
     
-    print(f"\n🌱 PassOn Backend — Local Dev Server")
+    print(f"\n[PassOn Backend] Local Dev Server")
     print(f"   Port:      {port}")
     print(f"   AI Mode:   {'Groq Vision (real AI)' if has_key else 'Mock (no GROQ_API_KEY)'}")
     print(f"   Endpoint:  http://localhost:{port}/api/analyze")
     print(f"   Health:    http://localhost:{port}/api/health\n")
+
     
     app.run(host="0.0.0.0", port=port, debug=True)
